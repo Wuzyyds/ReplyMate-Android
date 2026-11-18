@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.ReplyMate" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">#FF0E0A13</item>
+        <item name="android:navigationBarColor">#FF0E0A13</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowBackground">#FF0E0A13</item>
+        <!-- Android 12+ 启动画面默认跟浅色主题取白色，冷启动会闪一下白；显式压成深色 -->
+        <item name="android:windowSplashScreenBackground">#FF0E0A13</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+</resources>

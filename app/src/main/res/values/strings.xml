@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">轻聊</string>
+    <string name="accessibility_label">轻聊 读屏取词</string>
+    <string name="accessibility_desc">读取当前聊天界面里屏幕可见的消息，用于生成回复建议。只在本机处理，不滑动、不滚动、不发送任何消息。</string>
+</resources>

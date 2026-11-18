@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ReplyMate · 增量设计稿 v2（模式 / 表情 / 朋友圈 / 润色 / 画像演化 / 按钮切图）</title>
+<link rel="stylesheet" href="spec.css">
+<style>
+  /* ===== v2 only ===== */
+  .imgpick {
+    position: relative; height: 88px; border-radius: 16px; overflow: hidden;
+    background: linear-gradient(150deg, #9FB4C4 0%, #C3CFD6 38%, #8FA37E 39%, #6E8A5E 100%);
+    border: 1px solid #E4E6EF;
+  }
+  .imgpick .sun { position: absolute; right: 34px; top: 14px; width: 26px; height: 26px; border-radius: 50%; background: #F6E7C8; opacity: .85; }
+  .imgpick .tag { position: absolute; left: 8px; bottom: 8px; font-size: 9px; color: #fff; background: rgba(20,24,36,.45); padding: 2px 7px; border-radius: 5px; }
+  .imgpick .del { position: absolute; right: 8px; top: 8px; width: 20px; height: 20px; border-radius: 50%; background: rgba(20,24,36,.45); color: #fff; font-size: 11px; display: grid; place-items: center; }
+
+  .inputcard { border-radius: 14px; border: 1px solid #D9DDEA; background: #fff; padding: 9px 11px; }
+  .inputcard .ph { font-size: 11.5px; color: #A6ABBB; }
+  .inputcard .txt { font-size: 11.5px; color: #2A2F3D; line-height: 1.6; }
+  .inputcard .cnt { text-align: right; font-size: 9px; color: #C2C7D2; margin-top: 3px; }
+
+  .mode-note {
+    margin-top: 9px; padding: 7px 10px; border-radius: 10px; font-size: 9.5px; line-height: 1.5;
+    color: #8A6A2F; background: #FDF6E8; border: 1px dashed #EBD9B4;
+  }
+
+  .cand .h .cp { margin-left: 6px; font-size: 9px; color: #4A53D6; border: 1px solid #D6DAF7; border-radius: 5px; padding: 1px 6px; }
+  .cand .tags { font-size: 10px; color: #4A53D6; margin-top: 5px; }
+
+  .fold-inline {
+    display: flex; align-items: center; gap: 6px; padding: 9px 12px; margin-top: 8px;
+    border-radius: 12px; border: 1px dashed #D9DDEA; background: #FBFCFE;
+    font-size: 10.5px; color: #6E7488;
+  }
+  .fold-inline .go { margin-left: auto; color: #4A53D6; font-weight: 500; }
+
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 58px; padding: 10px 14px 14px;
+    background: #fff; border-radius: 22px 22px 0 0; border-top: 1px solid #EDEFF4;
+    box-shadow: 0 -14px 44px rgba(20,24,40,.18);
+  }
+  .sheet .handle { width: 34px; height: 4px; border-radius: 2px; background: #E4E7EF; margin: 0 auto 10px; }
+  .sheet .sh-t { font-size: 11.5px; font-weight: 600; color: #2A2F3D; display: flex; align-items: center; gap: 6px; }
+  .sheet .sh-t .sh-s { font-size: 9px; color: #A6ABBB; font-weight: 400; }
+  .sheet .sh-t .x { margin-left: auto; color: #B0B5C2; font-size: 12px; }
+  .sh-res {
+    margin-top: 9px; padding: 8px 10px; border-radius: 10px; background: #F7F8FE;
+    border: 1px solid #E2E5F8; font-size: 10.5px; line-height: 1.5; color: #2A2F3D;
+  }
+  .sh-res .k2 { font-size: 8.5px; color: #4A53D6; margin-bottom: 4px; }
+
+  .sq { position: relative; }
+  .sq .fade {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 74px;
+    background: linear-gradient(rgba(244,245,248,0), #F4F5F8 72%);
+  }
+  .sq .warnline {
+    position: relative; z-index: 2; margin-top: 8px; font-size: 9.5px; color: #A6402F;
+    background: #FFF3F1; border: 1px dashed #F0CBC4; border-radius: 8px; padding: 6px 9px;
+  }
+
+  /* profile */
+  .pf-head { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 18px; background: #fff; border: 1px solid #E9EBF2; }
+  .pf-av { width: 46px; height: 46px; border-radius: 14px; background: #EDEFFE; color: #4A53D6; display: grid; place-items: center; font-size: 17px; font-weight: 600; }
+  .pf-nm { font-size: 15px; font-weight: 600; letter-spacing: -.2px; }
+  .pf-sub { font-size: 10px; color: #8A90A0; margin-top: 4px; }
+  .bar { height: 4px; border-radius: 2px; background: #EDEFF4; margin-top: 8px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: linear-gradient(90deg, #6E77EC, #4A53D6); border-radius: 2px; }
+
+  .pf-card { margin-top: 10px; padding: 12px 14px; border-radius: 16px; background: #fff; border: 1px solid #E9EBF2; }
+  .pf-card .h { font-size: 11px; font-weight: 600; color: #2A2F3D; display: flex; align-items: center; gap: 6px; }
+  .pf-card .h .auto { margin-left: auto; font-size: 8.5px; color: #2C8F5E; background: #E7F5EE; padding: 1px 6px; border-radius: 5px; font-weight: 500; }
+  .kv { display: flex; gap: 8px; font-size: 10.5px; line-height: 1.55; margin-top: 9px; }
+  .kv .k { width: 56px; flex: 0 0 auto; color: #9AA0B0; font-size: 9.5px; padding-top: 1px; }
+  .kv .v { color: #2A2F3D; flex: 1; }
+  .kv .v b { color: #1B1F2A; }
+  .kv .v em { font-style: normal; color: #C0392B; }
+
+  .tl { margin-top: 4px; }
+  .tl .it { display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid #F4F5F9; }
+  .tl .it:last-child { border-bottom: 0; }
+  .tl .dot { width: 5px; height: 5px; border-radius: 50%; background: #C9CEF7; margin-top: 5px; flex: 0 0 auto; }
+  .tl .dot.new { background: #F2A93B; }
+  .tl .c { flex: 1; }
+  .tl .t { font-size: 10.5px; color: #2A2F3D; line-height: 1.45; }
+  .tl .d { font-size: 9px; color: #A6ABBB; margin-top: 3px; }
+  .tl .undo { font-size: 9px; color: #4A53D6; align-self: center; flex: 0 0 auto; }
+
+  .ev {
+    margin-top: 9px; padding: 10px 12px; border-radius: 14px;
+    background: #F7F8FE; border: 1px solid #E2E5F8;
+  }
+  .ev .t { font-size: 10.5px; color: #2A2F3D; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+  .ev .t .x { margin-left: auto; color: #A6ABBB; font-size: 12px; }
+  .ev .d { font-size: 9.5px; color: #8A90A0; margin-top: 5px; line-height: 1.5; }
+  .ev .act { display: flex; gap: 8px; margin-top: 8px; }
+
+  /* button spec */
+  .b-pri, .b-sec, .b-txt, .b-ico, .b-chip { box-sizing: border-box; }
+  .b-pri {
+    height: 40px; padding: 0 18px; border-radius: 12px; background: #4A53D6; color: #fff;
+    font-size: 12.5px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    box-shadow: 0 6px 14px rgba(74,83,214,.28);
+  }
+  .b-pri.is-press { background: #3B44BE; box-shadow: 0 2px 6px rgba(59,68,190,.28) inset, 0 0 0 rgba(0,0,0,0); }
+  .b-pri.is-dis { background: #C9CDE8; color: #F4F5FA; box-shadow: none; }
+  .b-pri.sm { height: 30px; padding: 0 12px; border-radius: 9px; font-size: 10.5px; box-shadow: none; }
+
+  .b-sec {
+    height: 40px; padding: 0 18px; border-radius: 12px; background: #fff; border: 1px solid #D9DDEA;
+    color: #3B4154; font-size: 12.5px; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .b-sec.is-press { background: #F1F2F7; border-color: #C9CDD9; }
+  .b-sec.is-dis { border-color: #EDEFF3; color: #C6CBD6; background: #FCFCFD; }
+
+  .b-txt { padding: 6px 9px; border-radius: 8px; color: #4A53D6; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; }
+  .b-txt.is-press { color: #3B44BE; background: #EDEFFE; }
+  .b-txt.is-dis { color: #C6CBD6; }
+
+  .b-ico {
+    width: 28px; height: 28px; border-radius: 9px; background: #fff; border: 1px solid #E9EBF2;
+    color: #545B6E; display: inline-grid; place-items: center;
+  }
+  .b-ico.is-press { background: #EDEFFE; border-color: #C9CEF7; color: #4A53D6; }
+  .b-ico.is-dis { background: #F7F8FB; border-color: #F0F1F5; color: #C6CBD6; }
+
+  .spec-row { display: flex; gap: 26px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid #EFF0F5; }
+  .spec-row:last-child { border-bottom: 0; }
+  .ball.is-press {
+    transform: scale(.94);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 4px 10px rgba(18,24,40,.5), 0 0 34px rgba(242,169,59,.55);
+  }
+  .ball.is-dis { filter: grayscale(1); opacity: .32; box-shadow: 0 0 0 1px rgba(255,255,255,.06); }
+
+  .spec-row .nm { width: 118px; flex: 0 0 auto; }
+  .spec-row .nm .a { font-size: 11.5px; font-weight: 600; color: #2A2F3D; }
+  .spec-row .nm .b { font-size: 9px; color: #A6ABBB; margin-top: 4px; }
+  .spec-row .demo { display: flex; gap: 10px; align-items: center; flex: 0 0 auto; }
+  .spec-row .meta { flex: 1; font-size: 9.5px; color: #7A8091; line-height: 1.75; }
+  .spec-row .meta code { font-family: ui-monospace, Consolas, monospace; color: #4A53D6; }
+  .stlbl { font-size: 8.5px; color: #B0B5C2; text-align: center; margin-top: 6px; }
+  .demo-col { display: flex; flex-direction: column; align-items: center; }
+</style>
+</head>
+<body>
+<div class="board">
+
+  <div class="header">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-2.9-.4L4 21l1.4-4.1A8.2 8.2 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/>
+          <path d="M12.2 8.2l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z" fill="#F3C87C" stroke="none"/>
+        </svg>
+      </div>
+      <div>
+        <h1>ReplyMate · 增量设计稿 v2</h1>
+        <div class="sub">新增：模式切换（回复/发圈/润色）· 表情三档 · 朋友圈文案 · 润色双入口 · 联系人画像自动演化 · 按钮三态切图</div>
+      </div>
+    </div>
+    <div class="meta-right">
+      <div>在 v1 的 7 页基础上，<b>不加页面</b>，加一个「模式」维度</div>
+      <div>悬浮面板仍走 XML 预 inflate；表情在悬浮只给两档</div>
+      <div>新增能力：<b>Vision 图片理解（仅发圈，v1.1）</b></div>
+    </div>
+  </div>
+
+  <div class="tokens">
+    <div class="token"><span class="sw" style="background:#4A53D6"></span>主按钮<code>#4A53D6</code></div>
+    <div class="token"><span class="sw" style="background:#3B44BE"></span>按下<code>#3B44BE</code></div>
+    <div class="token"><span class="sw" style="background:#C9CDE8"></span>禁用<code>#C9CDE8</code></div>
+    <div class="token"><span class="sw" style="background:#F2A93B"></span>强调<code>#F2A93B</code></div>
+    <div class="token">模式 chip 三枚常驻顶栏，切换即换下方选择器</div>
+    <div class="token">表情 <code style="font-family:ui-monospace,monospace;font-size:10.5px;color:#9AA0B0">none / light / rich</code></div>
+  </div>
+
+  <!-- ================= 05 模式 ================= -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-num">05</div>
+      <div>
+        <h2>三种说话模式 · 同一个生成管线</h2>
+        <p>回复 / 发圈 / 润色共用「3 条候选 + why + 来源角标」的结构，只换约束与出口。发圈没有回填，润色两种都有。</p>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <!-- A 发圈 -->
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span class="r">5G
+              <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>82%</span></div>
+            <div class="topbar">
+              <span class="back">‹</span>
+              <div class="modes"><div>回复</div><div class="on">发圈</div><div>润色</div></div>
+              <span class="spacer"></span>
+              <span class="pill pill-gray">发圈</span>
+            </div>
+            <div class="body">
+              <div class="imgpick">
+                <div class="sun"></div>
+                <span class="tag">已选 1 张 · 只理解第一张</span>
+                <span class="del">×</span>
+              </div>
+
+              <div class="lbl" style="margin-top:11px"><span>我想说点啥（可留空）</span><span>0 / 120</span></div>
+              <div class="inputcard">
+                <div class="txt">周末去了趟山里，人少，走了一整天<span class="caret"></span></div>
+              </div>
+
+              <div class="lbl" style="margin-top:10px"><span>场景</span><span>决定模板骨架</span></div>
+              <div class="chips">
+                <div class="chip">日常</div>
+                <div class="chip on">旅行</div>
+                <div class="chip">美食</div>
+                <div class="chip">加班</div>
+                <div class="chip">纪念日</div>
+                <div class="chip">吐槽</div>
+              </div>
+
+              <div class="lbl" style="margin-top:9px"><span>篇幅</span></div>
+              <div class="chips">
+                <div class="chip on">短</div>
+                <div class="chip">中</div>
+                <div class="chip">带话题</div>
+              </div>
+
+              <div class="duo" style="margin-top:9px">
+                <div style="flex:1">
+                  <div class="lbl"><span>风格</span></div>
+                  <div class="seg"><div class="on">稳</div><div>暖</div><div>机灵</div></div>
+                </div>
+                <div style="width:116px">
+                  <div class="lbl"><span>表情</span></div>
+                  <div class="seg"><div>无</div><div class="on">少</div><div>多</div></div>
+                </div>
+              </div>
+
+              <div class="cand" style="margin-top:9px; padding:8px 11px 8px">
+                <div class="h">
+                  <span class="idx">1</span>
+                  <span class="pill pill-amber">暖</span>
+                  <span class="src">模型</span>
+                  <span class="cp">复制整段</span>
+                </div>
+                <div class="t">山里信号不好，反而把一周的话都咽回去了。回程路上一直在想那句：人少的风景才舍得给你。</div>
+              </div>
+
+              <div class="cand" style="padding:8px 11px 8px">
+                <div class="h">
+                  <span class="idx">2</span>
+                  <span class="pill pill-indigo">稳</span>
+                  <span class="src">模型</span>
+                  <span class="cp">复制整段</span>
+                </div>
+                <div class="t">走了一整天，只遇到三个人。这种安静现在挺奢侈的。</div>
+              </div>
+
+              <div class="cand" style="padding:8px 11px 8px">
+                <div class="h">
+                  <span class="idx">3</span>
+                  <span class="pill pill-green">机灵</span>
+                  <span class="src">模型</span>
+                  <span class="cp">复制整段</span>
+                </div>
+                <div class="t">把手机丢包里走了一天，回来发现没人找我。挺好的，真的。</div>
+                <div class="tags">#周末去哪儿  #山系生活</div>
+              </div>
+
+              <div class="lbl" style="margin-top:10px"><span>话题标签池</span><span>点一下换</span></div>
+              <div class="chips">
+                <div class="chip on">#周末去哪儿</div>
+                <div class="chip">#山系生活</div>
+                <div class="chip">#秋日限定</div>
+                <div class="chip">＋ 收藏</div>
+              </div>
+
+              <div style="font-size:9px;color:#A6ABBB;margin-top:9px;line-height:1.5">
+                微信朋友圈上限 1500 字，超出会被截断 · 图片只在选图时上传一次，用完不存
+              </div>
+            </div>
+            <div class="sticky">
+              <span class="btn-ghost">换一批</span>
+              <span class="b-pri sm" style="flex:1;height:34px;font-size:11.5px">一键复制这条</span>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>生成页 · 发圈模式</b><br>图片 + 场景 + 篇幅；出口只有复制，没有回填</div>
+      </div>
+
+      <!-- B 润色 独立 -->
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span class="r">5G
+              <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>82%</span></div>
+            <div class="topbar">
+              <span class="back">‹</span>
+              <div class="modes"><div>回复</div><div>发圈</div><div class="on">润色</div></div>
+              <span class="spacer"></span>
+              <span class="pill pill-indigo">入口 A</span>
+            </div>
+            <div class="body">
+              <div class="lbl" style="margin-top:4px"><span>我原本想说的</span><span>13 / 300</span></div>
+              <div class="inputcard" style="border-color:#C9CEF7;box-shadow:0 0 0 3px rgba(74,83,214,.08)">
+                <div class="txt">这活儿我不干，你别找我了。<span class="caret"></span></div>
+                <div class="cnt">不会改事实，只改说法</div>
+              </div>
+
+              <div class="lbl" style="margin-top:10px"><span>改成什么语气</span><span>单选</span></div>
+              <div class="chips">
+                <div class="chip on">更客气</div>
+                <div class="chip">更亲近</div>
+                <div class="chip">更专业</div>
+                <div class="chip">更简短</div>
+              </div>
+
+              <div class="duo" style="margin-top:9px">
+                <div style="flex:1">
+                  <div class="lbl"><span>风格</span></div>
+                  <div class="seg"><div class="on">稳</div><div>暖</div><div>机灵</div></div>
+                </div>
+                <div style="width:116px">
+                  <div class="lbl"><span>表情</span></div>
+                  <div class="seg"><div class="on">无</div><div>少</div><div>多</div></div>
+                </div>
+              </div>
+
+              <div class="mode-note">只改说法，不改事实 · 不替你加承诺、加时间、加理由以外的东西</div>
+
+              <div class="cand" style="margin-top:9px;padding:8px 11px 8px">
+                <div class="h"><span class="idx">1</span><span class="pill pill-indigo">稳</span><span class="src">模型</span></div>
+                <div class="t">这次真接不了，手上两个项目都在节点上，怕耽误您。</div>
+                <div class="why"><b>改了什么 · </b>把"我不干"换成"接不了 + 具体理由"，拒绝保留，攻击性去掉。</div>
+                <div class="acts"><span class="btn-xs">复制</span><span class="btn-xs pri fill">回填</span></div>
+              </div>
+
+              <div class="cand" style="padding:8px 11px 8px">
+                <div class="h"><span class="idx">2</span><span class="pill pill-amber">暖</span><span class="src">模型</span></div>
+                <div class="t">不是不想帮，是这周实在排不下。下次提前说，我给您留时间。</div>
+                <div class="why"><b>改了什么 · </b>加了"下次"这个出口，把一次性拒绝变成长期关系。</div>
+                <div class="acts"><span class="btn-xs">复制</span><span class="btn-xs pri fill">回填</span></div>
+              </div>
+
+              <div class="cand" style="padding:8px 11px 8px">
+                <div class="h"><span class="idx">3</span><span class="pill pill-green">机灵</span><span class="src">模型</span></div>
+                <div class="t">这活儿我接不住，硬上只会拖累您。要不我推荐个人给您？</div>
+                <div class="why"><b>改了什么 · </b>用"接不住"给自己台阶，再用推荐换回人情。</div>
+                <div class="acts"><span class="btn-xs">复制</span><span class="btn-xs pri fill">回填</span></div>
+              </div>
+            </div>
+            <div class="sticky">
+              <span class="btn-ghost">换一批</span>
+              <span class="b-pri sm" style="flex:1;height:34px;font-size:11.5px">复制</span>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>润色 · 入口 A（独立模式）</b><br>首页直达，0 次额外点击；不打断当前任务</div>
+      </div>
+
+      <!-- C 折叠区 -->
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span class="r">5G
+              <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>82%</span></div>
+            <div class="topbar">
+              <span class="back">‹</span>
+              <div class="modes"><div class="on">回复</div><div>发圈</div><div>润色</div></div>
+              <span class="spacer"></span>
+              <span class="pill pill-gray">入口 B</span>
+            </div>
+            <div class="body">
+              <div class="fold">
+                <span class="badge">微信 · 9 条</span>
+                <span class="txt">小伍，这个方案明天能给吗？ / 客户那边在催…</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9AA0B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+
+              <div class="fold-inline">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4A53D6" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M15 4l5 5-9.5 9.5L5 20l1.5-5.5z"/></svg>
+                有句话想自己说？
+                <span class="go">就地润色 ›</span>
+              </div>
+
+              <div class="lbl" style="margin-top:10px"><span>回复候选</span><span>3 条 · 整批原子</span></div>
+
+              <div class="cand" style="margin-top:0;padding:8px 11px 8px">
+                <div class="h"><span class="idx">1</span><span class="pill pill-indigo">稳</span><span class="src">模型</span></div>
+                <div class="t">王总，明天下班前能给您一版完整的。今天先发您框架和结论，您看方向对不对？</div>
+              </div>
+              <div class="cand" style="padding:8px 11px 8px">
+                <div class="h"><span class="idx">2</span><span class="pill pill-amber">暖</span><span class="src">模型</span></div>
+                <div class="t">可以的，明天下午 4 点前发您。今晚我先整理框架，同步一版给您过目。</div>
+              </div>
+              <div class="cand" style="padding:8px 11px 8px">
+                <div class="h"><span class="idx">3</span><span class="pill pill-green">机灵</span><span class="src">模型</span></div>
+                <div class="t">明天能给。不过我想先跟您对一下重点：更看重完整度，还是先看结论？</div>
+              </div>
+            </div>
+
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="sh-t">就地润色 <span class="sh-s">已带上这段对话 · 不跳页</span><span class="x">✕</span></div>
+              <div class="inputcard" style="margin-top:9px">
+                <div class="txt" style="font-size:11px">这活儿我不干，你别找我了。<span class="caret"></span></div>
+              </div>
+              <div class="chips" style="margin-top:8px">
+                <div class="chip on" style="font-size:9.5px;padding:3px 8px">更客气</div>
+                <div class="chip" style="font-size:9.5px;padding:3px 8px">更亲近</div>
+                <div class="chip" style="font-size:9.5px;padding:3px 8px">更专业</div>
+                <div class="chip" style="font-size:9.5px;padding:3px 8px">更简短</div>
+              </div>
+              <div class="sh-res">
+                <div class="k2">1 · 更客气</div>
+                这次真接不了，手上两个项目都在节点上，怕耽误您。
+              </div>
+              <div style="display:flex;gap:7px;margin-top:9px">
+                <span class="btn-xs">换一句</span>
+                <span class="btn-xs pri" style="margin-left:auto">复制</span>
+                <span class="btn-xs pri">回填输入框</span>
+              </div>
+            </div>
+            <div class="sticky">
+              <span class="btn-ghost">换一批</span>
+              <span class="b-pri sm" style="flex:1;height:34px;font-size:11.5px">回填输入框</span>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>润色 · 入口 B（折叠条 + 底部弹层）</b><br>不跳页；候选不挪位，关掉弹层即回到原样</div>
+      </div>
+
+      <!-- right -->
+      <div class="col-right">
+        <div class="pf-card" style="margin-top:0">
+          <div class="h">两种润色入口 · 对比</div>
+          <div style="margin-top:10px">
+            <table style="width:100%;border-collapse:collapse;font-size:9.5px">
+              <tr style="color:#9AA0B0">
+                <td style="padding:0 0 7px;width:76px"></td>
+                <td style="padding:0 0 7px">入口 A · 独立模式</td>
+                <td style="padding:0 0 7px">入口 B · 折叠区</td>
+              </tr>
+              <tr style="border-top:1px solid #F1F2F6">
+                <td style="padding:7px 0;color:#2A2F3D;font-weight:600">点击次数</td>
+                <td style="padding:7px 0">首页 1 次</td>
+                <td style="padding:7px 0">页内 1 次 + 展开</td>
+              </tr>
+              <tr style="border-top:1px solid #F1F2F6">
+                <td style="padding:7px 0;color:#2A2F3D;font-weight:600">当前任务</td>
+                <td style="padding:7px 0;color:#2C8F5E">完全独立</td>
+                <td style="padding:7px 0;color:#2C8F5E">弹层覆盖，候选不挪位</td>
+              </tr>
+              <tr style="border-top:1px solid #F1F2F6">
+                <td style="padding:7px 0;color:#2A2F3D;font-weight:600">上下文</td>
+                <td style="padding:7px 0">要重新说一遍场景</td>
+                <td style="padding:7px 0">已读到对话，可带上</td>
+              </tr>
+              <tr style="border-top:1px solid #F1F2F6">
+                <td style="padding:7px 0;color:#2A2F3D;font-weight:600">适合</td>
+                <td style="padding:7px 0">"我要说一句狠话"</td>
+                <td style="padding:7px 0">"读到的对话里，我想插一句自己的"</td>
+              </tr>
+              <tr style="border-top:1px solid #F1F2F6">
+                <td style="padding:7px 0;color:#2A2F3D;font-weight:600">我的建议</td>
+                <td style="padding:7px 0;color:#2A2F3D">✅ 主入口</td>
+                <td style="padding:7px 0;color:#2A2F3D">✅ 折叠条 + 底部弹层（原来会挤压候选，改成弹层后这个问题消失了）</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="pf-card">
+          <div class="h">表情三档 · 实现口径</div>
+          <div class="kv"><span class="k">枚举</span><div class="v"><b>none / light / rich</b>，存 <code style="font-family:ui-monospace,monospace;font-size:10px;color:#4A53D6">generation.emoji_policy</code></div></div>
+          <div class="kv"><span class="k">生成页</span><div class="v">三档：无 · 少 · 多</div></div>
+          <div class="kv"><span class="k">悬浮面板</span><div class="v">只给「无 · 少」两档（空间不够，且职场场景用不上"多"）</div></div>
+          <div class="kv"><span class="k">兜底</span><div class="v">模型会滥用，所以<b>必须后处理</b>：none 全剥；light 每条 ≤1 且 3 条不重复；rich ≤3 且不堆句首</div></div>
+          <div class="kv"><span class="k">验收红线</span><div class="v"><em>emoji 不算进"3 条差异 ≥60%"</em>；<em>采纳相似度先剥 emoji 再算</em>，否则加个 😂 就能把 0.86 算成 0.6</div></div>
+        </div>
+
+        <div class="pf-card" style="background:#FBFCFE">
+          <div class="h">朋友圈 · 三个硬约束</div>
+          <div class="kv"><span class="k">只理解 1 张</span><div class="v">多图只取第一张，其余不做处理 —— 别骗自己"支持 9 图"，成本 ×9 收益 ≈0</div></div>
+          <div class="kv"><span class="k">先描述再写</span><div class="v">Vision 输出 1~2 句画面描述 → 描述进 prompt，比直接塞图省 token 也更稳</div></div>
+          <div class="kv"><span class="k">负向词表</span><div class="v">禁「生活明朗万物可爱 / 人间烟火气 / 治愈一切」，禁感叹号堆砌</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= 06 画像 ================= -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-num">06</div>
+      <div>
+        <h2>联系人画像 · 自动演化</h2>
+        <p>聊得越久，画像越准。但"自动迭代"是这类功能最容易翻车的地方——模型会自我强化偏见，所以更新必须是<b>显式、可追溯、可撤销、一次一条</b>。</p>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span class="r">5G
+              <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>82%</span></div>
+            <div class="topbar">
+              <span class="back">‹</span>
+              <span class="ttl" style="font-size:15px">王总</span>
+              <span class="spacer"></span>
+              <span class="pill pill-green">自动迭代 · 开</span>
+            </div>
+            <div class="body">
+              <div class="pf-head">
+                <div class="pf-av">王</div>
+                <div style="flex:1">
+                  <div class="pf-nm">王总</div>
+                  <div class="pf-sub">领导 · 聊了 12 次 · 采纳 8 次</div>
+                  <div class="bar"><i style="width:68%"></i></div>
+                </div>
+                <div style="text-align:right;font-size:9px;color:#A6ABBB;line-height:1.5">亲密度<br><span style="font-size:13px;color:#2A2F3D;font-weight:600">68%</span></div>
+              </div>
+
+              <div class="pf-card">
+                <div class="h">我对他 / 她的理解<span class="auto">由 8 次采纳提炼</span></div>
+                <div class="kv"><span class="k">表达习惯</span><div class="v"><b>短句、结论先行</b>，几乎不客套</div></div>
+                <div class="kv"><span class="k">真正在意</span><div class="v">交付时间、<b>返工成本</b></div></div>
+                <div class="kv"><span class="k">雷区</span><div class="v"><em>周末加班</em>、<em>临时改期</em></div></div>
+                <div class="kv"><span class="k">吃哪一套</span><div class="v">先给时间，再给方案；不接受"我尽量"</div></div>
+              </div>
+
+              <div class="pf-card">
+                <div class="h">怎么变的<span style="margin-left:auto;font-size:8.5px;color:#A6ABBB;font-weight:400">每次最多改 1 条</span></div>
+                <div class="tl">
+                  <div class="it">
+                    <span class="dot new"></span>
+                    <div class="c">
+                      <div class="t">新增雷区「临时改期」</div>
+                      <div class="d">11-08 · 依据 11-07 那次对话（原文已按 7 天规则清理）</div>
+                    </div>
+                    <span class="undo">撤销</span>
+                  </div>
+                  <div class="it">
+                    <span class="dot"></span>
+                    <div class="c">
+                      <div class="t">语气从「正式」改为「直奔结论」</div>
+                      <div class="d">10-30 · 你在 3 次生成里都选了更短的那条</div>
+                    </div>
+                    <span class="undo">撤销</span>
+                  </div>
+                  <div class="it">
+                    <span class="dot"></span>
+                    <div class="c">
+                      <div class="t">新建档案（关系：领导）</div>
+                      <div class="d">10-21 · 手动</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pf-card">
+                <div class="h">最近 3 次<span style="margin-left:auto;font-size:8.5px;color:#A6ABBB;font-weight:400">只记结果，不存原话</span></div>
+                <div class="tl">
+                  <div class="it">
+                    <span class="dot"></span>
+                    <div class="c">
+                      <div class="t">11-07 · 谈条件 · 选了第 2 条</div>
+                      <div class="d">发出前手动改短了 8 个字</div>
+                    </div>
+                    <span class="undo" style="color:#A6ABBB">2.1s</span>
+                  </div>
+                  <div class="it">
+                    <span class="dot"></span>
+                    <div class="c">
+                      <div class="t">11-03 · 推进 · 选了第 1 条</div>
+                      <div class="d">直接用，未改</div>
+                    </div>
+                    <span class="undo" style="color:#A6ABBB">1.8s</span>
+                  </div>
+                  <div class="it">
+                    <span class="dot"></span>
+                    <div class="c">
+                      <div class="t">10-30 · 致歉 · 换了一批</div>
+                      <div class="d">3 条都没用，最后自己写的</div>
+                    </div>
+                    <span class="undo" style="color:#C0392B">未采纳</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="privacy" style="margin-top:10px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A90A0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                <div>
+                  <div class="p1">画像里没有原话</div>
+                  <div class="p2">只存 4 条摘要 + 时间戳，且只在本机 · 可一键清空</div>
+                </div>
+              </div>
+            </div>
+            <div class="sticky">
+              <span class="btn-ghost">重新提炼</span>
+              <span class="note" style="margin-left:auto">画像条数上限 8 条，超了要合并优先级</span>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>P-07 联系人档案（改造）</b><br>从"填表单"变成"看我理解得对不对"</div>
+      </div>
+
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span class="r">5G
+              <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>82%</span></div>
+            <div class="topbar">
+              <span class="back">‹</span>
+              <div class="modes"><div class="on">回复</div><div>发圈</div><div>润色</div></div>
+              <span class="spacer"></span>
+              <span class="pill pill-gray">将发送</span>
+            </div>
+            <div class="body">
+              <div class="cand" style="margin-top:4px;padding:9px 11px">
+                <div class="h"><span class="idx">1</span><span class="pill pill-indigo">稳</span><span class="src">模型</span></div>
+                <div class="t">王总，明天下班前能给您一版完整的。今天先发您框架和结论，您看方向对不对？</div>
+                <div class="why"><b>为什么这样说 · </b>先给可交付时间，再用框架换一次确认，避免明天整版返工。</div>
+                <div class="acts">
+                  <span class="btn-xs">复制</span>
+                  <span class="btn-xs pri fill">回填输入框</span>
+                </div>
+              </div>
+
+              <div class="ev">
+                <div class="t">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4A53D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 5.4L20 10.5l-5.9 2.1L12 18l-2.1-5.4L4 10.5l5.9-2.1z"/></svg>
+                  聊完这次，我更新了对王总的理解
+                  <span class="x">×</span>
+                </div>
+                <div class="d">新增一条 · 雷区：<b style="color:#C0392B">临时改期</b>　　依据：11-07 的对话（本机，不上传）</div>
+                <div class="act">
+                  <span class="btn-xs" style="border-color:#C9CEF7;color:#4A53D6">保留这条</span>
+                  <span class="btn-xs">撤销</span>
+                  <span class="btn-xs" style="margin-left:auto;border:0;color:#9AA0B0">查看完整档案 ›</span>
+                </div>
+              </div>
+
+              <div class="cand" style="padding:9px 11px">
+                <div class="h"><span class="idx">2</span><span class="pill pill-amber">暖</span><span class="src">模型</span></div>
+                <div class="t">可以的，明天下午 4 点前发您。今晚我先整理框架，同步一版给您过目，行吗？</div>
+                <div class="why"><b>为什么这样说 · </b>把"能"拆成两个节点，显得靠谱又不逞强。</div>
+              </div>
+
+              <div class="cand" style="padding:9px 11px">
+                <div class="h"><span class="idx">3</span><span class="pill pill-green">机灵</span><span class="src off">离线模板 · 未调用模型</span></div>
+                <div class="t">明天能给。不过我想先跟您对一下重点：更看重完整度，还是明天先看结论？</div>
+              </div>
+
+              <div class="pf-card" style="margin-top:10px;background:#FAFBFE;border-color:#E6E9F5">
+                <div class="h" style="font-size:10px">自动迭代的规矩</div>
+                <div class="kv"><span class="k">只在采纳后</span><div class="v">没被采纳的生成不进画像，避免用"废稿"训练偏见</div></div>
+                <div class="kv"><span class="k">一次一条</span><div class="v">每次最多改 1 条，改哪条必须能指向具体某次对话</div></div>
+                <div class="kv"><span class="k">不做静默</span><div class="v">画像一改，结果页必有提示条 + 撤销，<em>不允许后台悄悄变</em></div></div>
+                <div class="kv"><span class="k">可整体关闭</span><div class="v">关掉后档案退化为手动填写的静态卡</div></div>
+              </div>
+            </div>
+            <div class="sticky">
+              <span class="btn-ghost">换一批</span>
+              <span class="note" style="margin-left:auto">演化提示不打断选卡，也不抢按钮位</span>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>结果页 · 演化提示</b><br>轻提示条，不弹窗、不阻断，随时可撤</div>
+      </div>
+
+      <div class="col-right">
+        <div class="pf-card" style="margin-top:0">
+          <div class="h">画像怎么演化 · 四个问题</div>
+          <div class="kv"><span class="k">何时提炼</span><div class="v">每次<b>采纳</b>后写入一条本地事件；攒够 3 条或距上次 ≥7 天，异步提炼一次（WorkManager，可被打断）</div></div>
+          <div class="kv"><span class="k">用哪些数据</span><div class="v">只喂<b>已采纳的那条候选 + 你手改后的最终文本</b>；不喂对方原话、不喂未采纳的草稿</div></div>
+          <div class="kv"><span class="k">原文怎么办</span><div class="v">提炼在本机 7 天窗口内完成；产出只有 4 条摘要 + 时间戳，原话照常被清理，<b>不进画像</b></div></div>
+          <div class="kv"><span class="k">模型挂了呢</span><div class="v">不更新，不报错、不弹窗；下次攒够再试。<em>宁可不更新，也不要瞎更新</em></div></div>
+        </div>
+
+        <div class="pf-card">
+          <div class="h">为什么必须"显式 + 可撤销"</div>
+          <div style="font-size:10px;color:#6E7488;line-height:1.75;margin-top:8px">
+            自动迭代最典型的翻车是<b>自我强化</b>：模型第一次判错"他不喜欢寒暄"，之后每次生成都更简短，你越用越觉得对，画像越走越偏，最后变成一个你不敢信任的黑盒。<br><br>
+            所以规矩定死：<b>一次只动一条、必须指向具体某次对话、必须在结果页告知、必须能撤销。</b>做不到这四条，这个功能就不该上线。
+          </div>
+        </div>
+
+        <div class="pf-card" style="border-color:#F6DAD5;background:#FFFAF9">
+          <div class="h" style="color:#A6402F">一条红线</div>
+          <div style="font-size:10px;color:#A6402F;line-height:1.7;margin-top:8px">
+            画像本身是"对某个人的判断"，比聊天记录更敏感。所以：<b>不出本机、不上传、不导出到备份 JSON</b>，且清空数据时优先删它。
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= 07 按钮切图 ================= -->
+  <div class="sec" style="margin-bottom:0">
+    <div class="sec-head">
+      <div class="sec-num">07</div>
+      <div>
+        <h2>按钮静态切图 · 三态（默认 / 按下 / 禁用）</h2>
+        <p>按下态一律<b>不改尺寸</b>，只改色与阴影，避免点击时布局跳动。点击热区最小 44×44dp，视觉高度 40dp 的按钮靠上下各 2dp 的透明内边距补足。</p>
+      </div>
+    </div>
+
+    <div class="pf-card" style="margin-top:0;padding:4px 18px">
+
+      <div class="spec-row">
+        <div class="nm"><div class="a">主按钮</div><div class="b">Primary 40dp</div></div>
+        <div class="demo">
+          <div class="demo-col"><span class="b-pri">回填输入框</span><span class="stlbl">默认</span></div>
+          <div class="demo-col"><span class="b-pri is-press">回填输入框</span><span class="stlbl">按下</span></div>
+          <div class="demo-col"><span class="b-pri is-dis">回填输入框</span><span class="stlbl">禁用</span></div>
+        </div>
+        <div class="meta">
+          高 40 · 圆角 12 · 内边距 18 · 字号 12.5/600<br>
+          底 <code>#4A53D6</code> → 按下 <code>#3B44BE</code>（深 12%，去投影）→ 禁用 <code>#C9CDE8</code> + 文字 40% 白<br>
+          投影 <code>0 6 14 rgba(74,83,214,.28)</code>；按下时投影归零，用色差表达按下
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="nm"><div class="a">主按钮 · 小号</div><div class="b">Primary sm 30dp</div></div>
+        <div class="demo">
+          <div class="demo-col"><span class="b-pri sm">一键复制这条</span><span class="stlbl">默认</span></div>
+          <div class="demo-col"><span class="b-pri sm is-press">一键复制这条</span><span class="stlbl">按下</span></div>
+          <div class="demo-col"><span class="b-pri sm is-dis">一键复制这条</span><span class="stlbl">禁用</span></div>
+        </div>
+        <div class="meta">
+          高 30 · 圆角 9 · 内边距 12 · 字号 10.5/600<br>
+          用于候选卡内、面板底部；<b>不带投影</b>（小尺寸带投影会脏）<br>
+          点按热区靠外层 6dp padding 补到 44
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="nm"><div class="a">次按钮</div><div class="b">Secondary 40dp</div></div>
+        <div class="demo">
+          <div class="demo-col"><span class="b-sec">换一批</span><span class="stlbl">默认</span></div>
+          <div class="demo-col"><span class="b-sec is-press">换一批</span><span class="stlbl">按下</span></div>
+          <div class="demo-col"><span class="b-sec is-dis">换一批</span><span class="stlbl">禁用</span></div>
+        </div>
+        <div class="meta">
+          高 40 · 圆角 12 · 内边距 18 · 字号 12.5/500<br>
+          边 <code>#D9DDEA</code> → 按下 底 <code>#F1F2F7</code> + 边 <code>#C9CDD9</code> → 禁用 边 <code>#EDEFF3</code> + 文字 <code>#C6CBD6</code>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="nm"><div class="a">文字按钮</div><div class="b">Text</div></div>
+        <div class="demo">
+          <div class="demo-col"><span class="b-txt">展开完整页 ›</span><span class="stlbl">默认</span></div>
+          <div class="demo-col"><span class="b-txt is-press">展开完整页 ›</span><span class="stlbl">按下</span></div>
+          <div class="demo-col"><span class="b-txt is-dis">展开完整页 ›</span><span class="stlbl">禁用</span></div>
+        </div>
+        <div class="meta">
+          字号 12/500 · 内边距 6×9 · 圆角 8<br>
+          <code>#4A53D6</code> → 按下 文字 <code>#3B44BE</code> + 底 <code>#EDEFFE</code> → 禁用 <code>#C6CBD6</code><br>
+          用于"换一批""展开完整页""撤销"
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="nm"><div class="a">图标按钮</div><div class="b">Icon 28dp</div></div>
+        <div class="demo">
+          <div class="demo-col">
+            <span class="b-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></span>
+            <span class="stlbl">默认</span>
+          </div>
+          <div class="demo-col">
+            <span class="b-ico is-press"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></span>
+            <span class="stlbl">按下</span>
+          </div>
+          <div class="demo-col">
+            <span class="b-ico is-dis"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></span>
+            <span class="stlbl">禁用</span>
+          </div>
+        </div>
+        <div class="meta">
+          28×28 · 圆角 9 · 图标 14 · 描边 1.8<br>
+          白底 <code>#E9EBF2</code> 边 → 按下 <code>#EDEFFE</code> 底 + <code>#C9CEF7</code> 边 + 主色图标<br>
+          热区必须包 44×44 的 Box（Compose 用 <code>minimumInteractiveComponentSize</code>）
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="nm"><div class="a">悬浮球</div><div class="b">Floating ball 52dp</div></div>
+        <div class="demo">
+          <div class="demo-col">
+            <div class="ball" style="position:relative;top:0;right:0">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l2.1 5.4L20 10.5l-5.9 2.1L12 18l-2.1-5.4L4 10.5l5.9-2.1z"/></svg>
+            </div>
+            <span class="stlbl">默认</span>
+          </div>
+          <div class="demo-col">
+            <div class="ball is-press" style="position:relative;top:0;right:0">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l2.1 5.4L20 10.5l-5.9 2.1L12 18l-2.1-5.4L4 10.5l5.9-2.1z"/></svg>
+            </div>
+            <span class="stlbl">按下</span>
+          </div>
+          <div class="demo-col">
+            <div class="ball is-dis" style="position:relative;top:0;right:0">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l2.1 5.4L20 10.5l-5.9 2.1L12 18l-2.1-5.4L4 10.5l5.9-2.1z"/></svg>
+            </div>
+            <span class="stlbl">无障碍关闭</span>
+          </div>
+        </div>
+        <div class="meta">
+          52dp · 径向渐变 <code>#39426B → #151B2B</code> · 琥珀光晕 <code>0 0 26 rgba(242,169,59,.38)</code><br>
+          按下：缩到 <b>0.94</b> + 光晕扩到 34 + 内阴影加深；<b>不做位移</b>，否则拖动会跳<br>
+          置灰：<code>grayscale(1)</code> + 32% 不透明，点击直接跳权限页
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="nm"><div class="a">候选卡</div><div class="b">Candidate card</div></div>
+        <div class="demo" style="align-items:stretch">
+          <div class="demo-col">
+            <div class="cand" style="width:186px;margin:0;padding:8px 10px">
+              <div class="h"><span class="idx">1</span><span class="pill pill-indigo">稳</span></div>
+              <div class="t" style="font-size:10.5px">王总，明天下班前能给您一版。</div>
+            </div>
+            <span class="stlbl">默认</span>
+          </div>
+          <div class="demo-col">
+            <div class="cand sel" style="width:186px;margin:0;padding:8px 10px">
+              <div class="h"><span class="idx">1</span><span class="pill pill-indigo">稳</span></div>
+              <div class="t" style="font-size:10.5px">王总，明天下班前能给您一版。</div>
+            </div>
+            <span class="stlbl">选中（已回填）</span>
+          </div>
+          <div class="demo-col">
+            <div class="cand" style="width:186px;margin:0;padding:8px 10px;background:#FAFBFF;border-color:#DCE0F5">
+              <div class="h"><span class="idx">1</span><span class="pill pill-indigo">稳</span></div>
+              <div class="t" style="font-size:10.5px">王总，明天下班前能给您一版。</div>
+            </div>
+            <span class="stlbl">按下</span>
+          </div>
+        </div>
+        <div class="meta">
+          圆角 16 · 边 1px <code>#E9EBF2</code> → 选中 边 <code>#C9CEF7</code> + 投影 <code>0 6 18 rgba(74,83,214,.10)</code><br>
+          按下：底色 <code>#FAFBFF</code> + 边 <code>#DCE0F5</code>，<b>不加缩放</b>（卡片缩放会让整列抖动）<br>
+          整卡可点 = 回填；复制按钮独立热区，必须 <code>stopPropagation</code>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="nm"><div class="a">状态条 / Toast</div><div class="b">Feedback</div></div>
+        <div class="demo" style="gap:14px">
+          <div class="demo-col">
+            <div class="toast" style="position:relative;left:0;bottom:0;transform:none;padding:7px 14px">已复制，请长按粘贴</div>
+            <span class="stlbl">兜底 Toast（单态）</span>
+          </div>
+          <div class="demo-col">
+            <div class="dg-banner" style="width:210px">这次没生成成功，给你 3 条备用说法</div>
+            <span class="stlbl">降级横幅（单态）</span>
+          </div>
+        </div>
+        <div class="meta">
+          Toast：<code>rgba(20,24,36,.94)</code> · 圆角 999 · 字号 11 · 距底 84<br>
+          <b>只有一个态</b>，因为它不是可点元素；降级横幅用中性暖色，不用红色（不是错误，是兜底）
+        </div>
+      </div>
+
+    </div>
+
+    <div class="redline" style="margin-top:22px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><circle cx="12" cy="16.5" r="1"/><circle cx="12" cy="12" r="9"/></svg>
+      <div><b>切图交付口径</b>：三态同名同尺寸（<code style="font-family:ui-monospace,monospace">btn_primary_normal / _pressed / _disabled</code>，@2x/@3x），按下态只改色不缩放；Android 侧实际上用 Compose <code style="font-family:ui-monospace,monospace">ButtonDefaults</code> 实现，切图仅用于走查与对齐，不进包体。</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>ReplyMate 增量设计稿 v2 · 对应「模式 / 表情 / 朋友圈 / 润色 / 画像演化 / 按钮三态」六项决策</span>
+    <span>待定：朋友圈带图进 v1.1 · 润色两个入口并存 · 画像显式可撤销</span>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+# 构建产物（可由源码重建，不进仓库）
+build/
+app/build/
+.gradle/
+.kotlin/
+
+# 本机配置：SDK 路径每台机器不同，不能提交
+local.properties
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 调试与分发产物（APK 走 GitHub Release，不进仓库）
+*.apk
+*.aab
+*.log
+
+# 工作区私有记录（开发过程日志，不公开）
+.workbuddy/

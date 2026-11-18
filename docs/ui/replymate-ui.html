@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ReplyMate · 高情商回复助手 · UI 设计稿 v1</title>
+<link rel="stylesheet" href="spec.css">
+</head>
+<body>
+<div class="board">
+
+  <!-- ============ HEADER ============ -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-2.9-.4L4 21l1.4-4.1A8.2 8.2 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/>
+          <path d="M12.2 8.2l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z" fill="#F3C87C" stroke="none"/>
+        </svg>
+      </div>
+      <div>
+        <h1>ReplyMate · 高情商回复助手</h1>
+        <div class="sub">UI 设计稿 v1 ｜ 按关系与目标给 3 条得体回复并解释为什么，只回填不代发</div>
+      </div>
+    </div>
+    <div class="meta-right">
+      <div>Android 单机版 · <b>minSdk 26 / targetSdk 35</b></div>
+      <div>7 页 · 3 Tab ｜ 单用户 · 侧载 APK</div>
+      <div>主 App：<b>Jetpack Compose</b> ｜ 悬浮面板：<b>XML + View</b> 预 inflate</div>
+    </div>
+  </div>
+
+  <!-- ============ TOKENS ============ -->
+  <div class="tokens">
+    <div class="token"><span class="sw" style="background:#4A53D6"></span>主色 Indigo<code>#4A53D6</code></div>
+    <div class="token"><span class="sw" style="background:#F2A93B"></span>强调 Amber<code>#F2A93B</code></div>
+    <div class="token"><span class="sw" style="background:#14161C"></span>墨黑 Ink<code>#14161C</code></div>
+    <div class="token"><span class="sw" style="background:#F4F5F8;border:1px solid #E6E8EF"></span>背景<code>#F4F5F8</code></div>
+    <div class="token"><span class="sw" style="background:#2FA36B"></span>成功<code>#2FA36B</code></div>
+    <div class="token">圆角  卡片 16–20dp · 面板 22dp · 悬浮球 圆形</div>
+    <div class="token">字号  21 / 17 / 12.5 / 11 / 9.5</div>
+    <div class="token">间距  4 · 8 · 12 · 16 · 20</div>
+  </div>
+
+  <!-- ============ 01 MAIN APP ============ -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-num">01</div>
+      <div>
+        <h2>主 App · 4 个关键界面</h2>
+        <p>底部 3 Tab：首页 / 历史 / 设置；生成页是二级全屏页。每页均需覆盖空 / 加载 / 错误 / 权限未授权四态。</p>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <!-- ---------- P-01 首页 ---------- -->
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status">
+              <span>9:41</span>
+              <span class="r">5G
+                <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>
+                82%
+              </span>
+            </div>
+            <div class="body">
+              <div class="greet">
+                <h3>下午好，<span class="u">正勇</span></h3>
+                <p>这周你已经练了 8 次表达 · 比上周多 2 次</p>
+              </div>
+
+              <div class="entry-main">
+                <div class="glow"></div>
+                <div class="ico">
+                  <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="8" y="3" width="9" height="13" rx="2"/><path d="M6 8v11a2 2 0 0 0 2 2h7"/>
+                  </svg>
+                </div>
+                <div class="k">粘贴一段对话</div>
+                <div class="s">最快路径 · 不需要任何系统权限</div>
+                <div class="go">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </div>
+
+              <div class="grid3">
+                <div class="entry-sm">
+                  <div class="ico-box ico-indigo">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg>
+                  </div>
+                  <div class="k">截图</div>
+                  <div class="s">本地 OCR</div>
+                </div>
+                <div class="entry-sm">
+                  <div class="ico-box ico-amber">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12.5h5"/></svg>
+                  </div>
+                  <div class="k">朋友圈</div>
+                  <div class="s">配图写文案</div>
+                </div>
+                <div class="entry-sm">
+                  <div class="ico-box ico-green">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4l5 5-9.5 9.5L5 20l1.5-5.5z"/><path d="M13 6l5 5"/></svg>
+                  </div>
+                  <div class="k">润色</div>
+                  <div class="s">糙话变体面</div>
+                </div>
+              </div>
+
+              <div class="statusbar-card">
+                <span class="live"></span>
+                <div>
+                  <div class="t">悬浮球运行中 · 微信 / BOSS / 飞书</div>
+                  <div class="s">无障碍已授权 · 点击暂停</div>
+                </div>
+                <div class="toggle"><i></i></div>
+              </div>
+
+              <div class="stat">
+                <div class="h"><span>本周</span><span>本地统计，不上传</span></div>
+                <div class="nums">
+                  <div class="n"><div class="v">8</div><div class="l">次生成</div></div>
+                  <div class="n"><div class="v">55%</div><div class="l">候选采纳</div></div>
+                  <div class="n"><div class="v">62s</div><div class="l">平均到发出</div></div>
+                </div>
+              </div>
+
+              <div class="recent">
+                <div class="r1">
+                  <span class="pill pill-indigo">领导</span>
+                  <span class="pill pill-gray">谈条件</span>
+                  <span style="margin-left:auto">昨天 21:40</span>
+                </div>
+                <div class="r2">"小伍，这个方案明天能给吗？"</div>
+                <div class="r3">已采纳 · 第 2 条（暖）</div>
+              </div>
+
+              <div class="privacy">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A90A0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                <div>
+                  <div class="p1">截图与读屏原文不出本机</div>
+                  <div class="p2">只上传本次要生成的文字片段 · 零第三方 SDK</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tabs">
+              <div class="tab on">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>
+                首页
+              </div>
+              <div class="tab">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg>
+                历史
+              </div>
+              <div class="tab">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15a1.7 1.7 0 0 0-1.6-1H1a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 3 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9 3V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 9h.1a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.6 1z"/></svg>
+                设置
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>P-01 首页</b><br>三个入口 + 悬浮球状态 + 本周数据</div>
+      </div>
+
+      <!-- ---------- P-02 生成页 ---------- -->
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status">
+              <span>9:41</span>
+              <span class="r">5G
+                <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>
+                82%
+              </span>
+            </div>
+            <div class="topbar">
+              <span class="back">‹</span>
+              <div class="modes">
+                <div class="on">回复</div>
+                <div>发圈</div>
+                <div>润色</div>
+              </div>
+              <span class="spacer"></span>
+              <span class="pill pill-gray">将发送的内容</span>
+            </div>
+
+            <div class="body">
+              <div class="fold">
+                <span class="badge">微信 · 9 条</span>
+                <span class="txt">小伍，这个方案明天能给吗？ / 客户那边在催…</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9AA0B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+
+              <div class="lbl"><span>关系</span><span>上次：领导</span></div>
+              <div class="chips">
+                <div class="chip">朋友</div>
+                <div class="chip">暧昧</div>
+                <div class="chip">家人</div>
+                <div class="chip">HR</div>
+                <div class="chip on">领导</div>
+                <div class="chip">同事</div>
+                <div class="chip">客户</div>
+              </div>
+
+              <div class="lbl"><span>目标</span><span>缺一不可</span></div>
+              <div class="chips">
+                <div class="chip">维持</div>
+                <div class="chip">推进</div>
+                <div class="chip">拒绝</div>
+                <div class="chip">致歉</div>
+                <div class="chip on">谈条件</div>
+                <div class="chip">结束对话</div>
+              </div>
+
+              <div class="duo">
+                <div style="flex:1">
+                  <div class="lbl"><span>风格</span></div>
+                  <div class="seg">
+                    <div class="on">稳</div>
+                    <div>暖</div>
+                    <div>机灵</div>
+                  </div>
+                </div>
+                <div style="width:116px">
+                  <div class="lbl"><span>表情</span><span style="color:#C2C7D2">无/少/多</span></div>
+                  <div class="seg">
+                    <div class="on">无</div>
+                    <div>少</div>
+                    <div>多</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cand sel">
+                <div class="h">
+                  <span class="idx">1</span>
+                  <span class="pill pill-indigo">稳</span>
+                  <span class="src">模型</span>
+                </div>
+                <div class="t">王总，明天下班前能给您一版完整的。今天先发您框架和结论，您看方向对不对？</div>
+                <div class="why"><b>为什么这样说 · </b>先给可交付时间，再用框架换一次确认，避免明天整版返工。</div>
+                <div class="acts">
+                  <span class="btn-xs">复制</span>
+                  <span class="btn-xs pri fill">回填输入框</span>
+                </div>
+              </div>
+
+              <div class="cand">
+                <div class="h">
+                  <span class="idx">2</span>
+                  <span class="pill pill-amber">暖</span>
+                  <span class="src">模型</span>
+                </div>
+                <div class="t">可以的，明天下午 4 点前发您。今晚我先整理框架，同步一版给您过目，行吗？</div>
+                <div class="why"><b>为什么这样说 · </b>把"能"拆成两个节点，显得靠谱又不逞强。</div>
+                <div class="acts">
+                  <span class="btn-xs">复制</span>
+                  <span class="btn-xs pri fill">回填输入框</span>
+                </div>
+              </div>
+
+              <div class="cand">
+                <div class="h">
+                  <span class="idx">3</span>
+                  <span class="pill pill-green">机灵</span>
+                  <span class="src off">离线模板 · 未调用模型</span>
+                </div>
+                <div class="t">明天能给。不过我想先跟您对一下重点：是更看重完整度，还是明天先看结论？</div>
+                <div class="why"><b>为什么这样说 · </b>用提问把时限压力转成需求对齐，给自己争取空间。</div>
+                <div class="acts">
+                  <span class="btn-xs">复制</span>
+                  <span class="btn-xs pri fill">回填输入框</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="sticky">
+              <span class="btn-ghost">换一批</span>
+              <div class="note">屏内 9 条 → 送模型 6 条<br>来源由数据字段决定，UI 不推断</div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>P-02 生成页（核心）</b><br>3 条候选 + 每条 1 句解释 + 来源角标 · 整批原子</div>
+      </div>
+
+      <!-- ---------- P-05 历史 ---------- -->
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status">
+              <span>9:41</span>
+              <span class="r">5G
+                <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>
+                82%
+              </span>
+            </div>
+            <div class="topbar">
+              <span class="ttl" style="font-size:20px">历史</span>
+              <span class="spacer"></span>
+              <span class="icon-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+              </span>
+            </div>
+            <div class="body">
+              <div class="chips" style="margin-bottom:12px">
+                <div class="chip on">全部</div>
+                <div class="chip">领导</div>
+                <div class="chip">客户</div>
+                <div class="chip">朋友</div>
+                <div class="chip">更多</div>
+              </div>
+
+              <div class="hitem">
+                <div class="r1">
+                  <span class="pill pill-indigo">领导</span>
+                  <span class="pill pill-gray">谈条件</span>
+                  <span class="pill pill-amber">暖</span>
+                  <span class="tm">昨天 21:40</span>
+                </div>
+                <div class="q">"小伍，这个方案明天能给吗？"</div>
+                <div class="a">可以的，明天下午 4 点前发您。今晚我先整理框架…</div>
+                <div class="r4"><span style="color:#2FA36B">✓ 已采纳</span><span>·</span><span>相似度 0.86</span><span>·</span><span>2.1s 首字</span></div>
+              </div>
+
+              <div class="hitem">
+                <div class="r1">
+                  <span class="pill pill-indigo">客户</span>
+                  <span class="pill pill-gray">留口子</span>
+                  <span class="pill pill-amber">稳</span>
+                  <span class="tm">周四 16:30</span>
+                </div>
+                <div class="q">"这个价格我们再考虑一下"</div>
+                <div class="a">理解，这个价格确实需要内部过一遍。我先把…</div>
+                <div class="r4"><span style="color:#2FA36B">✓ 已采纳</span><span>·</span><span>相似度 0.92</span></div>
+              </div>
+
+              <div class="hitem">
+                <div class="r1">
+                  <span class="pill pill-indigo">HR</span>
+                  <span class="pill pill-gray">谈条件</span>
+                  <span class="pill pill-amber">稳</span>
+                  <span class="tm">周三 15:02</span>
+                  <span class="pill pill-gray" style="margin-left:auto;background:#FBF6EC;color:#8A7A5E">模板</span>
+                </div>
+                <div class="q">"您期望薪资多少？"</div>
+                <div class="a">结合岗位职责和我的经验，我的期望是 25–28K…</div>
+                <div class="r4"><span style="color:#9AA0B0">未采纳</span><span>·</span><span>离线模板 · 未调用模型</span></div>
+              </div>
+
+              <div class="hitem">
+                <div class="r1">
+                  <span class="pill pill-indigo">暧昧</span>
+                  <span class="pill pill-gray">暖场</span>
+                  <span class="pill pill-green">机灵</span>
+                  <span class="tm">周六 22:10</span>
+                </div>
+                <div class="q">"刚忙完"</div>
+                <div class="a">猜你今晚挺赶的。正好我也刚收工，聊两句再睡？</div>
+                <div class="r4"><span style="color:#2FA36B">✓ 已采纳</span><span>·</span><span>相似度 0.78</span></div>
+              </div>
+
+              <div class="hitem">
+                <div class="r1">
+                  <span class="pill pill-indigo">家人</span>
+                  <span class="pill pill-gray">拒绝</span>
+                  <span class="pill pill-amber">暖</span>
+                  <span class="tm">周日 11:00</span>
+                </div>
+                <div class="q">"你是不是又不好好吃饭"</div>
+                <div class="a">妈我吃着呢，就是这周赶项目有点乱。您那篇我看了…</div>
+                <div class="r4"><span style="color:#2FA36B">✓ 已采纳</span><span>·</span><span>相似度 0.81</span></div>
+              </div>
+
+              <div class="hitem">
+                <div class="r1">
+                  <span class="pill pill-indigo">同事</span>
+                  <span class="pill pill-gray">推进</span>
+                  <span class="pill pill-amber">稳</span>
+                  <span class="tm">周一 10:12</span>
+                </div>
+                <div class="q">"那个文档什么时候能给我？"</div>
+                <div class="a">今天下午 3 点前发你，先给你结论页，剩下的明早补。</div>
+                <div class="r4"><span style="color:#9AA0B0">未采纳</span><span>·</span><span>3.4s 首字</span></div>
+              </div>
+            </div>
+
+            <div class="tabs">
+              <div class="tab">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>
+                首页
+              </div>
+              <div class="tab on">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg>
+                历史
+              </div>
+              <div class="tab">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15a1.7 1.7 0 0 0-1.6-1H1a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 3 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9 3V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 9h.1a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.6 1z"/></svg>
+                设置
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>P-05 历史</b><br>时间倒序 + 关系筛选 + 采纳标记 + 来源标记</div>
+      </div>
+
+      <!-- ---------- P-06 设置 ---------- -->
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status">
+              <span>9:41</span>
+              <span class="r">5G
+                <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>
+                82%
+              </span>
+            </div>
+            <div class="topbar">
+              <span class="ttl" style="font-size:20px">设置</span>
+            </div>
+            <div class="body">
+
+              <div class="grp">
+                <div class="grp-t">模型与 KEY</div>
+                <div class="card-w">
+                  <div class="srow">
+                    <span class="k">API Base</span>
+                    <span class="v">api.deepseek.com</span>
+                    <span class="chev">›</span>
+                  </div>
+                  <div class="srow">
+                    <span class="k">API Key</span>
+                    <span class="v">sk-••••••••••4f2a</span>
+                    <span class="chev">›</span>
+                  </div>
+                  <div class="srow">
+                    <span class="k">模型名</span>
+                    <span class="v">deepseek-chat</span>
+                    <span class="chev">›</span>
+                  </div>
+                  <div class="srow">
+                    <span class="k">连通性自检</span>
+                    <span class="v ok">成功 · 320ms</span>
+                    <span class="chev">›</span>
+                  </div>
+                </div>
+                <div style="font-size:10px;color:#A6ABBB;margin:7px 4px 0;line-height:1.5">
+                  预置 DeepSeek / 通义 / 智谱 三套模板，一键填充。Key 存 EncryptedSharedPreferences，不参与备份。
+                </div>
+              </div>
+
+              <div class="grp">
+                <div class="grp-t">默认选择</div>
+                <div class="card-w">
+                  <div class="srow"><span class="k">默认关系</span><span class="v">朋友</span><span class="chev">›</span></div>
+                  <div class="srow"><span class="k">默认目标</span><span class="v">维持</span><span class="chev">›</span></div>
+                  <div class="srow"><span class="k">默认风格</span><span class="v">稳</span><span class="chev">›</span></div>
+                </div>
+              </div>
+
+              <div class="grp">
+                <div class="grp-t">数据与隐私</div>
+                <div class="card-w">
+                  <div class="srow"><span class="k">联系人档案</span><span class="v">3 位</span><span class="chev">›</span></div>
+                  <div class="srow"><span class="k">原文保留</span><span class="v">7 天</span><span class="chev">›</span></div>
+                  <div class="srow"><span class="k">导出备份（DB JSON）</span><span class="chev">›</span></div>
+                  <div class="srow warn"><span class="k" style="color:#A6402F">清空全部数据</span><span class="chev">›</span></div>
+                </div>
+                <div style="font-size:10px;color:#A6ABBB;margin:7px 4px 0;line-height:1.5">
+                  截图与读屏原文不出本机；指标表无原文、无候选文本、无联系人名。
+                </div>
+              </div>
+
+              <div class="grp">
+                <div class="grp-t">关于</div>
+                <div class="card-w">
+                  <div class="srow"><span class="k">版本</span><span class="v">1.0.0 (M1)</span></div>
+                  <div class="srow"><span class="k">无障碍服务</span><span class="v ok">已开启</span></div>
+                  <div class="srow"><span class="k">悬浮窗权限</span><span class="v ok">已授予</span></div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="tabs">
+              <div class="tab">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>
+                首页
+              </div>
+              <div class="tab">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg>
+                历史
+              </div>
+              <div class="tab on">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15a1.7 1.7 0 0 0-1.6-1H1a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 3 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9 3V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 9h.1a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.6 1z"/></svg>
+                设置
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>P-06 设置</b><br>模型与 Key / 默认选择 / 数据与隐私 / 权限自检</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ 02 OVERLAY ============ -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-num">02</div>
+      <div>
+        <h2>悬浮层 · 核心形态（覆盖在目标 App 之上，不抢焦点）</h2>
+        <p>WindowManager 浮层 + <code style="font-family:ui-monospace,monospace;font-size:11px;color:#4A53D6">FLAG_NOT_FOCUSABLE</code>：不抢焦点、不弹输入法、不打断打字。面板定位在输入框上方 8dp，键盘弹起时重算。</p>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <!-- state 1: docked -->
+      <div>
+        <div class="phone">
+          <div class="screen wx">
+            <div class="status">
+              <span>9:41</span>
+              <span class="r">5G
+                <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>
+                82%
+              </span>
+            </div>
+            <div class="wx-head">
+              <span>‹</span><span class="nm">王总</span><span>⋯</span>
+            </div>
+            <div class="wx-body">
+              <div class="wx-time">21:38</div>
+              <div class="msg other">小伍，这个方案明天能给吗？</div>
+              <div class="msg me">我这边再捋一下细节</div>
+              <div class="msg other">客户那边一直在催</div>
+              <div class="msg me">好的</div>
+              <div class="msg other">明天上午能给个说法吗</div>
+              <div class="msg me">我看下排期</div>
+              <div class="msg other" style="background:#fff">你先说个时间，我好回客户</div>
+            </div>
+            <div class="wx-input">
+              <span class="mic">◎</span>
+              <div class="box"></div>
+              <span class="mic">☺</span>
+              <span class="mic">＋</span>
+            </div>
+            <div class="ball dock" style="top:44%">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F3C87C" stroke-width="2" stroke-linejoin="round"><path d="M12 4l2.1 5.4L20 11.5l-5.9 2.1L12 19l-2.1-5.4L4 11.5l5.9-2.1z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>① 贴边收起</b><br>24dp 半透明圆点，长按可拖动换边</div>
+      </div>
+
+      <!-- state 2: expanded -->
+      <div>
+        <div class="phone">
+          <div class="screen wx">
+            <div class="status">
+              <span>9:41</span>
+              <span class="r">5G
+                <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>
+                82%
+              </span>
+            </div>
+            <div class="wx-head">
+              <span>‹</span><span class="nm">王总</span><span>⋯</span>
+            </div>
+            <div class="wx-body">
+              <div class="wx-time">21:38</div>
+              <div class="msg other">小伍，这个方案明天能给吗？</div>
+              <div class="msg me">我这边再捋一下细节</div>
+              <div class="msg other">客户那边一直在催</div>
+              <div class="msg me">好的</div>
+            </div>
+            <div class="wx-input">
+              <span class="mic">◎</span>
+              <div class="box"></div>
+              <span class="mic">☺</span>
+              <span class="mic">＋</span>
+            </div>
+
+            <div class="panel">
+              <div class="handle"></div>
+              <div class="ph">
+                <span>微信 · 读到 9 条 · 送模型 6 条</span>
+                <span class="x">✕</span>
+              </div>
+              <div class="role">
+                <span class="lb">最后一句</span>
+                <div class="rtog"><div class="on">对方</div><div>我</div></div>
+                <span class="lb" style="margin-left:auto">判错点一下改</span>
+              </div>
+              <div class="chips">
+                <div class="chip on">领导</div>
+                <div class="chip on">谈条件</div>
+                <div class="chip on">稳</div>
+                <div class="chip" style="opacity:.65">表情</div>
+                <div class="chip on">无</div>
+                <div class="chip">少</div>
+              </div>
+
+              <div class="oc">
+                <span class="idx">1</span>
+                <div class="t">王总，明天下班前能给您一版完整的。今天先发框架和结论，您看方向对不对？</div>
+                <div class="ac">
+                  <div class="mini"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></div>
+                </div>
+              </div>
+              <div class="oc">
+                <span class="idx">2</span>
+                <div class="t">可以的，明天下午 4 点前发您。今晚我先整理框架，同步一版给您过目。</div>
+                <div class="ac">
+                  <div class="mini pri"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-9"/></svg></div>
+                </div>
+              </div>
+              <div class="oc">
+                <span class="idx">3</span>
+                <div class="t">明天能给。不过我想先跟您对一下重点：更看重完整度，还是明天先看结论？</div>
+                <div class="ac">
+                  <div class="mini"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></div>
+                </div>
+              </div>
+
+              <div class="pf">
+                <span>换一批</span>
+                <span>·</span>
+                <span>点文字直接回填</span>
+                <span class="r">展开完整页 ›</span>
+              </div>
+            </div>
+
+            <div class="ball" style="top:13%; right:8px">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l2.1 5.4L20 10.5l-5.9 2.1L12 18l-2.1-5.4L4 10.5l5.9-2.1z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>② 点球展开 · 3 条候选</b><br>面板 ≤300ms（XML 预 inflate，不走冷启动）</div>
+      </div>
+
+      <!-- right column -->
+      <div class="col-right">
+        <div class="tiles">
+          <div class="tile dark">
+            <div class="ball" style="position:relative;top:0;right:0">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l2.1 5.4L20 10.5l-5.9 2.1L12 18l-2.1-5.4L4 10.5l5.9-2.1z"/></svg>
+            </div>
+            <span class="lbl2">常驻 52dp</span>
+          </div>
+          <div class="tile dark">
+            <div class="ball" style="position:relative;top:0;right:0;width:36px;height:36px;opacity:.55">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.1 5.4L20 10.5l-5.9 2.1L12 18l-2.1-5.4L4 10.5l5.9-2.1z"/></svg>
+            </div>
+            <span class="lbl2">拖动中 · 30% 透明</span>
+          </div>
+          <div class="tile dark">
+            <div class="ball" style="position:relative;top:0;right:0">
+              <div class="ring"></div>
+              <div class="ring2"></div>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l2.1 5.4L20 10.5l-5.9 2.1L12 18l-2.1-5.4L4 10.5l5.9-2.1z"/></svg>
+            </div>
+            <span class="lbl2">读屏中 · 脉冲</span>
+          </div>
+        </div>
+
+        <div class="spec">
+          <div class="li"><b>悬浮球</b><span>52dp 圆形，贴右边缘竖排 44% 高度；<code>TYPE_APPLICATION_OVERLAY</code></span></div>
+          <div class="li"><b>收起态</b><span>24dp 圆点贴边，位移 &lt; 8dp 判为点击，超过判拖拽</span></div>
+          <div class="li"><b>面板</b><span>宽 = 屏宽 − 18dp，锚定在输入框 <code>top − 8dp</code>，键盘弹起重算</span></div>
+          <div class="li"><b>焦点</b><span><code>FLAG_NOT_FOCUSABLE</code> 不抢输入法；点候选不触发键盘收起</span></div>
+          <div class="li"><b>降级</b><span>读屏为空 2s 超时 → 面板原地给「改用截图」「改用粘贴」，已选关系/目标保留</span></div>
+          <div class="li"><b>回填失败</b><span>强制写剪贴板 + Toast「已复制，请长按粘贴」，不弹错误框</span></div>
+          <div class="li"><b>红线</b><span>只写输入框，<b>永不自动点发送</b></span></div>
+        </div>
+
+        <div style="margin-top:16px;position:relative;height:96px;background:#F1F2F7;border:1px solid #E4E6EF;border-radius:18px;overflow:hidden">
+          <div class="toast" style="bottom:52px">已复制，请长按粘贴</div>
+          <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:9px;color:#8A90A0">L2 也失败时的兜底：自动复制 + Toast，不锁 UI</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ 03 FLOW ============ -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-num">03</div>
+      <div>
+        <h2>主链路 · 4 步，全程 ≤ 300ms 唤起</h2>
+        <p>A 路径不降级完成的占比目标是 ≥80%；任何一步失败都必须一步滑到 B，不允许"你自己想办法"。</p>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="fstep">
+        <div class="n">STEP 01</div>
+        <div class="k">点悬浮球</div>
+        <div class="d">前台包白名单校验 → 2s 内读一屏可见消息</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="fstep">
+        <div class="n">STEP 02</div>
+        <div class="k">判角色 + 带出档案</div>
+        <div class="d">双信号投票定"对方 / 我"，自动带上次关系与目标</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="fstep">
+        <div class="n">STEP 03</div>
+        <div class="k">流式出 3 条</div>
+        <div class="d">首字 ≤2.5s，3 条可点 ≤6s，整批原子不混排</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="fstep">
+        <div class="n">STEP 04</div>
+        <div class="k">回填，人工发送</div>
+        <div class="d">L1 SET_TEXT → L2 粘贴 → L3 复制，永不代发</div>
+      </div>
+    </div>
+
+    <div class="redline">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><circle cx="12" cy="16.5" r="1"/><circle cx="12" cy="12" r="9"/></svg>
+      <div><b>不可退的三条</b>：永不自动发送 ／ 离线模板必打「离线模板 · 未调用模型」角标（中性灰） ／ 一批 3 条只能是全模型或全模板，<b>禁止混批</b>。</div>
+    </div>
+  </div>
+
+  <!-- ============ 04 REMAINING PAGES + STATES ============ -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-num">04</div>
+      <div>
+        <h2>其余页面 · 与四种必做状态</h2>
+        <p>截图识别页（P-03）、联系人档案（P-07），以及 PRD 要求每页覆盖的空 / 加载 / 错误 / 权限未授权四态中的三个关键态。</p>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <!-- P-03 -->
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status">
+              <span>9:41</span>
+              <span class="r">5G
+                <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>
+                82%
+              </span>
+            </div>
+            <div class="topbar">
+              <span class="back">‹</span>
+              <span class="ttl">截图识别</span>
+              <span class="spacer"></span>
+              <span class="pill pill-gray">本地处理</span>
+            </div>
+            <div class="body">
+              <div class="ocr-prev">
+                <span class="ocr-badge">OCR · 142 字 · 1.8s</span>
+                <div style="margin-top:20px">
+                  <div class="ocr-ln">小伍，这个方案明天能给吗</div><br>
+                  <div class="ocr-ln" style="background:#EDEFFE;border-color:#8E97EF">客户那边一直在催</div><br>
+                  <div class="ocr-ln">明天上午能给个说法吗</div><br>
+                  <div class="ocr-ln" style="color:#AEB3C1;border-color:#E6E8EF;background:#fff">（3 处标点丢失，已交给模型补全）</div>
+                </div>
+              </div>
+
+              <div class="lbl" style="margin-top:12px"><span>识别文本 · 可直接改错别字</span><span>142 / 3000</span></div>
+              <div class="tarea">
+                小伍，这个方案明天能给吗<br>
+                客户那边一直在催<br>
+                明天上午能给个说法吗<span class="caret"></span>
+              </div>
+
+              <div style="display:flex;gap:8px;margin-top:10px">
+                <span class="btn-xs" style="padding:7px 12px">重新截图</span>
+                <span class="btn-xs" style="padding:7px 12px">改用粘贴</span>
+                <span class="pill pill-amber" style="margin-left:auto;align-self:center">不持久化图片</span>
+              </div>
+
+              <div class="privacy" style="margin-top:12px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A90A0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                <div>
+                  <div class="p1">图片零上传，OCR 后即弃</div>
+                  <div class="p2">断网也能识别，只是不能生成</div>
+                </div>
+              </div>
+
+              <div class="lbl" style="margin-top:13px"><span>最近截图</span><span>Photo Picker · 零权限</span></div>
+              <div class="thumbs">
+                <div class="thumb on"></div>
+                <div class="thumb"></div>
+                <div class="thumb"></div>
+              </div>
+
+              <div class="lbl" style="margin-top:13px"><span>分享进来自动识别</span></div>
+              <div class="tarea" style="background:#F7F8FC;border-color:#E6E8EF;font-size:10.5px;color:#6E7488;line-height:1.65">
+                其他 App 里「分享图片 → ReplyMate」即可直达本页，无需先打开 App。
+              </div>
+            </div>
+
+            <div class="sticky">
+              <span class="btn-xs pri" style="flex:1;justify-content:center;padding:9px;font-size:12px">用这段文字生成 ›</span>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>P-03 截图识别</b><br>识别结果可编辑，标点交模型补全，不写正则纠错</div>
+      </div>
+
+      <!-- P-07 -->
+      <div>
+        <div class="phone">
+          <div class="screen">
+            <div class="status">
+              <span>9:41</span>
+              <span class="r">5G
+                <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>
+                82%
+              </span>
+            </div>
+            <div class="topbar">
+              <span class="back">‹</span>
+              <span class="ttl">联系人档案</span>
+              <span class="spacer"></span>
+              <span class="icon-btn" style="color:#4A53D6;font-size:15px">＋</span>
+            </div>
+            <div class="body">
+              <div style="font-size:10.5px;color:#8A90A0;line-height:1.6;margin:2px 0 12px">
+                建档后生成时自动带上：关系、禁忌话题、说话习惯。命中时结果页显示「已参考：XX 的档案」。
+              </div>
+
+              <div class="ct">
+                <div class="av" style="background:#EDEFFE;color:#4A53D6">王</div>
+                <div style="flex:1">
+                  <div class="nm">王总 <span class="pill pill-indigo" style="margin-left:4px">领导</span></div>
+                  <div class="ln">禁忌：别提周末加班 · 语气：直奔结论</div>
+                </div>
+                <div style="font-size:9px;color:#AEB3C1;align-self:center">12 次</div>
+              </div>
+
+              <div class="ct">
+                <div class="av" style="background:#FDF3E2;color:#C98A2C">李</div>
+                <div style="flex:1">
+                  <div class="nm">李 HR <span class="pill pill-amber" style="margin-left:4px">HR</span></div>
+                  <div class="ln">禁忌：不问加班强度 · 语气：正式、给数据</div>
+                </div>
+                <div style="font-size:9px;color:#AEB3C1;align-self:center">3 次</div>
+              </div>
+
+              <div class="ct">
+                <div class="av" style="background:#E7F5EE;color:#2C8F5E">妈</div>
+                <div style="flex:1">
+                  <div class="nm">妈妈 <span class="pill pill-green" style="margin-left:4px">家人</span></div>
+                  <div class="ln">禁忌：催婚 · 语气：轻松，先接情绪</div>
+                </div>
+                <div style="font-size:9px;color:#AEB3C1;align-self:center">6 次</div>
+              </div>
+
+              <div class="ct">
+                <div class="av" style="background:#EEF1F8;color:#4A5A7A">张</div>
+                <div style="flex:1">
+                  <div class="nm">张工 <span class="pill pill-gray" style="margin-left:4px">同事</span></div>
+                  <div class="ln">禁忌：无 · 语气：直接、可开玩笑</div>
+                </div>
+                <div style="font-size:9px;color:#AEB3C1;align-self:center">9 次</div>
+              </div>
+
+              <div class="ct">
+                <div class="av" style="background:#FDECEA;color:#C0392B">陈</div>
+                <div style="flex:1">
+                  <div class="nm">陈总 <span class="pill" style="margin-left:4px;background:#FDECEA;color:#C0392B">客户</span></div>
+                  <div class="ln">禁忌：不主动降价 · 语气：留口子，不跪不硬</div>
+                </div>
+                <div style="font-size:9px;color:#AEB3C1;align-self:center">4 次</div>
+              </div>
+
+              <div class="ct" style="border-style:dashed;background:transparent;justify-content:center;color:#A6ABBB;font-size:11px;padding:14px">
+                ＋ 新建档案（可留空，不阻断生成）
+              </div>
+
+              <div class="lbl" style="margin-top:14px"><span>档案如何影响结果</span></div>
+              <div class="tarea" style="border:none;background:#F1F2F7;font-size:10.5px;color:#6E7488;line-height:1.6">
+                只作为 prompt 里的「负向约束 + 语气」注入，不写进数据库原文。<br>
+                档案命中与否不改变 3 条候选的展示结构。
+              </div>
+            </div>
+            <div class="sticky">
+              <span class="note" style="margin-left:0">v2 才做完整编辑页；v1 仅建档 + 自动带上</span>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><b>P-07 联系人档案</b><br>称呼 / 关系 / 禁忌 / 常用语气</div>
+      </div>
+
+      <!-- states -->
+      <div class="col-right">
+        <div class="st-grid">
+
+          <div class="st-card">
+            <div class="st-l">
+              <div class="st-t"><span class="pill pill-indigo">加载</span>生成中 · 骨架屏 + 流式首字</div>
+              <div class="st-d">首字 ≤2.5s 必须有可见字符（只有骨架屏转圈不算达标）；3 条可点受 6s 约束，<b>不做逐条可点</b>。</div>
+            </div>
+            <div class="st-cv">
+              <div class="sk" style="width:82%"></div>
+              <div class="sk" style="width:64%"></div>
+              <div class="sk" style="width:74%"></div>
+              <div class="stream">王总，明天下班前能给您一版<span class="caret"></span></div>
+            </div>
+          </div>
+
+          <div class="st-card">
+            <div class="st-l">
+              <div class="st-t"><span class="pill pill-amber">降级</span>解析失败 · 整批换模板</div>
+              <div class="st-d">是<b>页面内文案不是弹窗</b>。3 条只能全模型或全模板，禁止混批；角标颜色中性灰，不当成警告。</div>
+            </div>
+            <div class="st-cv" style="background:#FFFCF5">
+              <div class="dg-banner">这次没生成成功，给你 3 条备用说法</div>
+              <div class="dg-card">
+                <span class="pill pill-gray" style="background:#FBF6EC;color:#8A7A5E">离线模板 · 未调用模型</span>
+                <div style="font-size:10px;color:#3B4154;margin-top:6px;line-height:1.5">明天能给。今天先发框架，明早补完整版。</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="st-card">
+            <div class="st-l">
+              <div class="st-t"><span class="pill" style="background:#FDECEA;color:#C0392B">错误</span>Key 失效 · 跳设置并高亮</div>
+              <div class="st-d">三个分支互斥，优先级 <b>Key &gt; 超时 &gt; 解析</b>。超时则保留进度文本 + 「重试」，不清空再渲染。</div>
+            </div>
+            <div class="st-cv">
+              <div class="dg-card" style="border-color:#F3C6BF;background:#FFF9F8">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="font-size:10px;color:#3B4154">API Key</span>
+                  <span style="margin-left:auto;font-size:9px;color:#C0392B">HTTP 401</span>
+                </div>
+                <div style="height:7px;border-radius:3px;background:#F3C6BF;margin-top:8px"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="st-card">
+            <div class="st-l">
+              <div class="st-t"><span class="pill" style="background:#F1F2F6;color:#6E7488">权限</span>无障碍关闭 · 悬浮球置灰</div>
+              <div class="st-d">不静默失败：横幅明说 + 一键跳系统设置；仍不行转截图 / 粘贴，<b>已选关系与目标不丢</b>。</div>
+            </div>
+            <div class="st-cv" style="display:flex;align-items:center;gap:10px">
+              <div class="ball" style="position:relative;top:0;right:0;width:38px;height:38px;opacity:.32;filter:grayscale(1)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F3C87C" stroke-width="1.9" stroke-linejoin="round"><path d="M12 3l2.1 5.4L20 10.5l-5.9 2.1L12 18l-2.1-5.4L4 10.5l5.9-2.1z"/></svg>
+              </div>
+              <div>
+                <div style="font-size:10px;color:#3B4154">无障碍已关闭</div>
+                <div style="font-size:9px;color:#A6402F;margin-top:3px">一键跳系统设置 ›</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="st-card">
+            <div class="st-l">
+              <div class="st-t"><span class="pill pill-gray">空态</span>历史为空 · 引导去首页</div>
+              <div class="st-d">空态不做插画堆砌，一句人话 + 一个主按钮；历史 200 条、单条可删、可按关系筛。</div>
+            </div>
+            <div class="st-cv" style="text-align:center;padding:14px">
+              <div style="width:34px;height:34px;border-radius:11px;background:#EDEFFE;margin:0 auto 8px;display:grid;place-items:center;color:#4A53D6">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg>
+              </div>
+              <div style="font-size:10px;color:#3B4154">还没有记录</div>
+              <div style="font-size:9px;color:#A6ABBB;margin-top:3px">去首页粘贴一段对话开始</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="matrix">
+          <table>
+            <tr>
+              <th>页面</th><th>空态</th><th>加载</th><th>错误</th><th>权限未授权</th>
+            </tr>
+            <tr>
+              <td>首页</td><td>引导粘贴</td><td>骨架</td><td>Key 未配 · 角标</td><td>悬浮球置灰 + 横幅</td>
+            </tr>
+            <tr>
+              <td>生成页</td><td>内容为空 · 禁用</td><td>骨架 + 流式</td><td>Key / 超时 / 解析</td><td>降级横幅（保选择）</td>
+            </tr>
+            <tr>
+              <td>截图识别</td><td>未选图</td><td>识别中 1.8s</td><td>无文字 → 改粘贴</td><td class="na">不申请存储权限</td>
+            </tr>
+            <tr>
+              <td>悬浮面板</td><td>没读到内容</td><td>脉冲球</td><td>读屏失败 → 切 OCR</td><td>无障碍未开</td>
+            </tr>
+            <tr>
+              <td>历史</td><td>还没有记录</td><td>列表骨架</td><td>读库失败 · 重试</td><td class="na">—</td>
+            </tr>
+            <tr>
+              <td>设置</td><td class="na">—</td><td>自检中</td><td>自检失败 · 红字</td><td>跳系统设置</td>
+            </tr>
+            <tr>
+              <td>联系人</td><td>＋ 新建档案</td><td class="na">—</td><td class="na">—</td><td class="na">—</td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>ReplyMate UI Spec v1 · 依据 PRD V1.0 / 技术研发方案 V1.2 / 完整交付方案 v1.1</span>
+    <span>7 页：首页 · 生成 · 截图识别 · 悬浮面板 · 历史 · 设置 · 联系人档案</span>
+  </div>
+
+</div>
+</body>
+</html>

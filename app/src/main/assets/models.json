@@ -1,0 +1,20 @@
+[
+  {
+    "name": "DeepSeek",
+    "baseUrl": "https://api.deepseek.com/v1",
+    "model": "deepseek-flash",
+    "note": "主力。deepseek-chat 已于 2026-07 退役，别再用；图片输入需实测确认"
+  },
+  {
+    "name": "通义千问",
+    "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3.7-plus",
+    "note": "备选，长上下文更宽容"
+  },
+  {
+    "name": "智谱 GLM",
+    "baseUrl": "https://open.bigmodel.cn/api/paas/v4",
+    "model": "glm-5.3-flash",
+    "note": "快速兜底；是否仍有免费档请在控制台确认"
+  }
+]

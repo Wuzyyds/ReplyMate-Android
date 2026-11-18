@@ -106,7 +106,7 @@ class SettingsStore(context: Context) {
     private companion object {
         /** 默认更新清单：公开仓库根目录的 update.json，用户可在设置里改成别的地址 */
         const val DEFAULT_UPDATE_URL =
-            "https://raw.githubusercontent.com/2422409071/ReplyMate-Android/main/update.json"
+            "https://raw.githubusercontent.com/Wuzyyds/ReplyMate-Android/main/update.json"
 
         const val K_BASE = "base_url"
         const val K_KEY = "api_key"

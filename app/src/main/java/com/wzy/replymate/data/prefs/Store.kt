@@ -95,15 +95,19 @@ class SettingsStore(context: Context) {
         get() = sp.getBoolean(K_EVOLVE, true)
         set(v) = sp.edit().putBoolean(K_EVOLVE, v).apply()
 
-    /** 版本清单地址（静态 JSON）；留空 = 关闭更新检查 */
+    /** 版本清单地址（静态 JSON）；默认指向公开仓库，留空 = 关闭更新检查 */
     var updateUrl: String
-        get() = sp.getString(K_UPDATE, "") ?: ""
+        get() = sp.getString(K_UPDATE, DEFAULT_UPDATE_URL) ?: DEFAULT_UPDATE_URL
         set(v) = sp.edit().putString(K_UPDATE, v.trim()).apply()
 
     private inline fun <reified T : Enum<T>> enumOf(name: String?, fallback: T): T =
         name?.let { runCatching { enumValueOf<T>(it) }.getOrNull() } ?: fallback
 
     private companion object {
+        /** 默认更新清单：公开仓库根目录的 update.json，用户可在设置里改成别的地址 */
+        const val DEFAULT_UPDATE_URL =
+            "https://raw.githubusercontent.com/2422409071/ReplyMate-Android/main/update.json"
+
         const val K_BASE = "base_url"
         const val K_KEY = "api_key"
         const val K_MODEL = "model_name"

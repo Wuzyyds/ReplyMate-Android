@@ -153,9 +153,11 @@ fun HomeScreen(onOpenGenerate: (TaskType) -> Unit, onOpenOcr: () -> Unit = {}) {
     ) {
         Spacer(Modifier.height(12.dp))
 
-        // 有新版本才出现的一条窄横幅，点了去浏览器下载
+        // 有新版本才出现的一条窄横幅：点一下下载并拉起安装器覆盖当前版本
         val upd by com.wzy.replymate.data.UpdateUi.available
         upd?.let { u ->
+            var progress by remember { mutableStateOf<Int?>(null) }
+            val scope = rememberCoroutineScope()
             Row(
                 Modifier
                     .padding(bottom = 12.dp)
@@ -163,12 +165,25 @@ fun HomeScreen(onOpenGenerate: (TaskType) -> Unit, onOpenOcr: () -> Unit = {}) {
                     .clip(RoundedCornerShape(14.dp))
                     .background(PrimarySoft)
                     .clickable {
-                        if (u.apkUrl.isNotBlank()) {
-                            runCatching {
-                                ctx.startActivity(
-                                    Intent(Intent.ACTION_VIEW, Uri.parse(u.apkUrl))
-                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                )
+                        if (progress != null) return@clickable
+                        if (u.apkUrl.isBlank()) {
+                            Toast.makeText(ctx, "更新地址为空", Toast.LENGTH_SHORT).show()
+                            return@clickable
+                        }
+                        // 没有「安装未知应用」权限就先带用户去开，回来再点一次
+                        if (!com.wzy.replymate.data.ApkInstaller.canInstall(ctx)) {
+                            Toast.makeText(ctx, "请先允许「安装未知应用」", Toast.LENGTH_LONG).show()
+                            com.wzy.replymate.data.ApkInstaller.openInstallPermission(ctx)
+                            return@clickable
+                        }
+                        progress = 0
+                        scope.launch {
+                            val err = com.wzy.replymate.data.ApkInstaller.downloadAndInstall(ctx, u.apkUrl) {
+                                progress = it
+                            }
+                            progress = null
+                            if (err != null) {
+                                Toast.makeText(ctx, err, Toast.LENGTH_LONG).show()
                             }
                         }
                     }
@@ -176,20 +191,29 @@ fun HomeScreen(onOpenGenerate: (TaskType) -> Unit, onOpenOcr: () -> Unit = {}) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "新版本 ${u.versionName}",
+                    if (progress != null) "更新 ${progress}%" else "新版本 ${u.versionName}",
                     fontSize = 11.5.sp,
                     color = Primary,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    u.notes.ifBlank { "点这里去下载" },
+                    when {
+                        progress != null -> "正在下载安装包，完成后会弹出安装界面"
+                        u.notes.isNotBlank() -> u.notes
+                        else -> "点这里下载安装"
+                    },
                     fontSize = 10.sp,
                     color = Primary.copy(alpha = 0.72f),
                     maxLines = 1,
                     modifier = Modifier.weight(1f)
                 )
-                Text("去下载 ›", fontSize = 10.5.sp, color = Primary, fontWeight = FontWeight.Medium)
+                Text(
+                    if (progress != null) "$progress%" else "更新 ›",
+                    fontSize = 10.5.sp,
+                    color = Primary,
+                    fontWeight = FontWeight.Medium
+                )
             }
         }
 

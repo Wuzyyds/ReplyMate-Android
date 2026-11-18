@@ -1,7 +1,7 @@
 {
-  "versionCode": 51,
-  "versionName": "1.0.51",
-  "notes": "新增应用内更新；修复深色主题下按钮看不清",
-  "apkUrl": "https://github.com/Wuzyyds/ReplyMate-Android/releases/download/v1.0.51/replymate-1.0.51.apk",
+  "versionCode": 52,
+  "versionName": "1.0.52",
+  "notes": "应用内更新显示下载进度；修复深色主题按钮看不见",
+  "apkUrl": "https://github.com/Wuzyyds/ReplyMate-Android/releases/download/v1.0.52/replymate-1.0.52.apk",
   "minSupported": 1
 }

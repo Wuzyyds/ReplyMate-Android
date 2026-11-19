@@ -1,7 +1,7 @@
 {
-  "versionCode": 61,
-  "versionName": "1.0.61",
-  "notes": "Key 已内置，装完即用；面板可拖动；修复微信读不到消息",
-  "apkUrl": "https://github.com/Wuzyyds/ReplyMate-Android/releases/download/v1.0.61/replymate-1.0.61.apk",
+  "versionCode": 62,
+  "versionName": "1.0.62",
+  "notes": "新增读屏自检；修复单字消息被吞、兜底失效、输入框高度估算",
+  "apkUrl": "https://github.com/Wuzyyds/ReplyMate-Android/releases/download/v1.0.62/replymate-1.0.62.apk",
   "minSupported": 1
 }

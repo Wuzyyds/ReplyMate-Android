@@ -44,12 +44,17 @@ class ReplyAccessibilityService : AccessibilityService() {
     companion object {
         @Volatile
         var instance: ReplyAccessibilityService? = null
+
+        /** 上一次读屏的实情（设置页「读屏自检」展示，用来排查微信读不到） */
+        @Volatile
+        var lastDiag: String = ""
             private set
 
         /** 收集时排除的 UI 词汇，避免把「发送/表情」当成聊天气泡 */
         val CHROME_WORDS = setOf(
             "发送", "返回", "更多", "表情", "相册", "拍摄", "语音", "视频通话",
-            "取消", "确定", "保存", "朋友圈", "通讯录", "发现", "我", "微信", "搜索"
+            "取消", "确定", "保存", "朋友圈", "通讯录", "发现", "微信", "搜索"
+            // 注意：不要把「我」放进来。单字消息「我」「嗯」很常见，会被误杀
         )
 
         fun isConnected(): Boolean = instance != null
@@ -266,6 +271,37 @@ class ReplyAccessibilityService : AccessibilityService() {
         }
         val result = best
         val cost = SystemClock.elapsedRealtime() - startedAt
+        // 记下这次读了什么：用户在微信里读不到时，回 App 的自检页就能看到实情，
+        // 不用靠猜过滤规则
+        lastDiag = buildString {
+            append("窗口数：").append(roots.size).append('\n')
+            if (result == null) {
+                append("没有一个窗口能收出气泡\n")
+                append("（桌面、系统栏、本应用自身会被跳过）")
+            } else {
+                append("包名：").append(result.pkg).append('\n')
+                append("扫描节点：").append(result.scanned).append(" 个\n")
+                append("底部输入框：").append(if (result.hasInput) "找到" else "没找到").append('\n')
+                append("判定聊天页：").append(if (result.chatInput) "是" else "否").append('\n')
+                append("标题：").append(result.title.ifBlank { "（空）" }).append('\n')
+                append("读到 ").append(result.lines.size).append(" 行，耗时 ").append(cost).append("ms\n")
+                if (result.lines.isNotEmpty()) {
+                    append("\n—— 最后 5 行 ——\n")
+                    result.lines.takeLast(5).forEach {
+                        append("· ").append(if (it.fromMe) "[我] " else "[对方] ")
+                        append(it.text.take(30)).append('\n')
+                    }
+                }
+                append("\n诊断：")
+                append(
+                    when {
+                        result.scanned == 0 -> "无障碍树是空的，窗口没拿到"
+                        result.lines.isEmpty() -> "树里有 ${result.scanned} 个节点但一行没收，过滤规则误杀"
+                        else -> "正常"
+                    }
+                )
+            }
+        }
         if (result == null) {
             Log.d("RM", "readScreen: ${roots.size} 个窗口都没收集到气泡，耗时=${cost}ms")
         } else {
@@ -314,7 +350,8 @@ class ReplyAccessibilityService : AccessibilityService() {
         val input = findInput(root, h)
         val inputTop = input?.let {
             val r = Rect(); it.getBoundsInScreen(r); r.top
-        } ?: (h - (90f * resources.displayMetrics.density).toInt())
+        // 找不到输入框时按经验估：微信输入栏带表情/加号，比 QQ 高，留 120dp 更安全
+        } ?: (h - (120f * resources.displayMetrics.density).toInt())
         // 底部输入框才算聊天页；列表页的顶部搜索框不能用来命名记忆
         val bottomInput = input != null && inputTop > h * 0.55f
 
@@ -347,8 +384,9 @@ class ReplyAccessibilityService : AccessibilityService() {
                     if (inBand || looseBand) {
                         val chrome = isChrome(txt)
                         if (!chrome && !isChatStatus(txt)) {
-                            // 严格结果出现后就不再收兜底副本，也不再为兜底跑 isStatusText
-                            val looseOk = looseBand && strict.isEmpty() && !isStatusText(txt)
+                            // 兜底无条件收集：以前这里是 strict.isEmpty()，
+                            // 一旦中途先收到标题栏之类的东西，后面的真实消息就再也不会进兜底
+                            val looseOk = looseBand && !isStatusText(txt)
                             // 聊天页里不只有气泡：日期、已读、职位卡片、整块点击卡片都要过滤
                             val strictOk = inBand &&
                                 r.width() > 8 && r.width() <= w * 0.92f &&

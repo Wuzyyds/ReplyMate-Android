@@ -10,7 +10,9 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentCopy
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.TextButton
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -58,6 +60,7 @@ import com.wzy.replymate.data.LlmException
 import com.wzy.replymate.data.humanizeLlmError
 import com.wzy.replymate.core.ModelCatalog
 import com.wzy.replymate.data.UpdateChecker
+import com.wzy.replymate.service.ReplyAccessibilityService
 import com.wzy.replymate.data.prefs.ModelConfig
 import com.wzy.replymate.data.prefs.ModelPresets
 import com.wzy.replymate.domain.EmojiPolicy
@@ -457,6 +460,47 @@ fun SettingsScreen(onOpenTemplates: () -> Unit = {}, onOpenContacts: () -> Unit 
             GhostButton("清空全部记录") {
                 scope.launch { app.db.generationDao().clear() }
             }
+        }
+
+        // ---- 读屏自检：展示「上一次」在聊天软件里读取的实情 ----
+        SectionLabel("读屏自检", "在微信/QQ 里点过球之后，回来这里看读到了什么")
+        var diag by remember { mutableStateOf<String?>(null) }
+        var diagBusy by remember { mutableStateOf(false) }
+        Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            GhostButton(if (diagBusy) "读取中…" else "查看上次读屏结果") {
+                if (diagBusy) return@GhostButton
+                diagBusy = true
+                scope.launch {
+                    // 注意：不要在这里重新读屏——那会把 lastDiag 覆盖成本应用界面的结果，
+                    // 用户想看的是「刚才在微信里读到了什么」
+                    diag = when {
+                        // 先区分「服务没开」和「读过但没内容」——两者处理方式完全不同
+                        ReplyAccessibilityService.instance == null ->
+                            "无障碍服务没连上。\n\n去系统设置 → 无障碍 → 轻聊 读屏取词，把开关打开。\n打开后回这里再试一次。"
+                        ReplyAccessibilityService.lastDiag.isBlank() ->
+                            "服务已就绪，但还没读取过内容。\n\n用法：切到微信聊天页，点一下悬浮球，再回这里看结果。"
+                        else -> ReplyAccessibilityService.lastDiag
+                    }
+                    diagBusy = false
+                }
+            }
+            Spacer(Modifier.width(10.dp))
+            Text(
+                "读不到内容时，把这里的结果发给我",
+                fontSize = 9.5.sp,
+                color = Faint,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        diag?.let { text ->
+            AlertDialog(
+                onDismissRequest = { diag = null },
+                confirmButton = {
+                    TextButton(onClick = { diag = null }) { Text("知道了") }
+                },
+                title = { Text("读屏自检结果", fontSize = 14.sp) },
+                text = { Text(text, fontSize = 11.sp, lineHeight = 17.sp) }
+            )
         }
 
         // ---- 关于 ----

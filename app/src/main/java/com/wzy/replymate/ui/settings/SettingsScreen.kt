@@ -473,19 +473,63 @@ fun SettingsScreen(onOpenTemplates: () -> Unit = {}, onOpenContacts: () -> Unit 
                     modifier = Modifier.padding(top = 3.dp)
                 )
                 if (hasUpdateUrl) {
+                    // 和首页横幅共用同一个「发现新版本」状态：这边检测到，那边也会出现
+                    val pending by com.wzy.replymate.data.UpdateUi.available
+                    var downloading by remember { mutableStateOf<Int?>(null) }
                     Row(Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                        GhostButton("检查更新") {
-                            scope.launch {
-                                updStatus = "检查中…"
-                                val info = runCatching { UpdateChecker.check(ctx, store.updateUrl) }.getOrNull()
-                                updStatus = when {
-                                    info != null -> "发现新版本 ${info.versionName}"
-                                    else -> "已是最新（${UpdateChecker.currentVersionName(ctx)}）"
+                        // 三态：有新版 → 立即更新；正在下 → 显示百分比；否则 → 检查更新
+                        when {
+                            downloading != null -> GhostButton("下载中 ${downloading}%") { /* 下载中不可重复点 */ }
+                            pending != null -> GhostButton("立即更新") {
+                                val info = pending ?: return@GhostButton
+                                if (info.apkUrl.isBlank()) {
+                                    updStatus = "该版本没有提供安装包地址"
+                                    return@GhostButton
+                                }
+                                if (!com.wzy.replymate.data.ApkInstaller.canInstall(ctx)) {
+                                    updStatus = "请先允许「安装未知应用」"
+                                    com.wzy.replymate.data.ApkInstaller.openInstallPermission(ctx)
+                                    return@GhostButton
+                                }
+                                scope.launch {
+                                    downloading = 0
+                                    val err = com.wzy.replymate.data.ApkInstaller.downloadAndInstall(ctx, info.apkUrl) {
+                                        downloading = it
+                                    }
+                                    downloading = null
+                                    updStatus = err ?: "下载完成，请在系统弹窗点「更新」完成覆盖"
+                                }
+                            }
+                            else -> GhostButton("检查更新") {
+                                scope.launch {
+                                    updStatus = "检查中…"
+                                    val info = runCatching { UpdateChecker.check(ctx, store.updateUrl) }.getOrNull()
+                                    updStatus = when {
+                                        info != null -> "发现新版本 ${info.versionName}"
+                                        else -> "已是最新（${UpdateChecker.currentVersionName(ctx)}）"
+                                    }
                                 }
                             }
                         }
                         Spacer(Modifier.width(10.dp))
-                        Text(updStatus, fontSize = 9.5.sp, color = Faint, modifier = Modifier.weight(1f))
+                        Text(
+                            // 有新版时优先显示「版本号 + 这次改了什么」，比只报一句"发现新版本"有用
+                            when {
+                                downloading != null ->
+                                    "正在下载 ${pending?.versionName.orEmpty()}，完成后会自动弹出安装界面"
+                                pending != null -> buildString {
+                                    append("新版本 ").append(pending?.versionName.orEmpty())
+                                    val n = pending?.notes.orEmpty()
+                                    if (n.isNotBlank()) append(" · ").append(n)
+                                }
+                                else -> updStatus
+                            },
+                            fontSize = 9.5.sp,
+                            color = if (pending != null) Primary else Faint,
+                            lineHeight = 14.sp,
+                            maxLines = 2,
+                            modifier = Modifier.weight(1f)
+                        )
                     }
                 } else {
                     Text(

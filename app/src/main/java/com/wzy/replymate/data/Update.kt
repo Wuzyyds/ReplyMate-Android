@@ -66,20 +66,31 @@ object UpdateChecker {
     }.getOrDefault("?")
 
     suspend fun check(context: Context, url: String): UpdateInfo? = withContext(Dispatchers.IO) {
-        if (url.isBlank()) return@withContext null
+        if (url.isBlank()) {
+            android.util.Log.d("RM", "update: 地址为空，跳过检查")
+            return@withContext null
+        }
+        android.util.Log.d("RM", "update: 请求 $url")
         val body = runCatching {
             val req = Request.Builder()
                 .url(url)
                 .header("Cache-Control", "no-cache")
                 .build()
             http.newCall(req).execute().use { r -> if (r.isSuccessful) r.body?.string() else null }
-        }.getOrNull() ?: return@withContext null
+        }.getOrNull()
+        android.util.Log.d("RM", "update: 响应=${body?.take(80)?.replace("\n", " ") ?: "null"}")
+        if (body == null) return@withContext null
 
         val info = runCatching { json.decodeFromString(UpdateInfo.serializer(), body) }.getOrNull()
-            ?: return@withContext null
+        if (info == null) {
+            android.util.Log.d("RM", "update: JSON 解析失败")
+            return@withContext null
+        }
 
         lastCheckAt = System.currentTimeMillis()
-        val newer = info.versionCode > currentVersionCode(context)
+        val local = currentVersionCode(context)
+        val newer = info.versionCode > local
+        android.util.Log.d("RM", "update: 本地=$local 线上=${info.versionCode} 需更新=$newer")
         UpdateUi.available.value = if (newer) info else null
         UpdateUi.available.value
     }

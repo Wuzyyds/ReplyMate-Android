@@ -1,0 +1,30 @@
+
+FAILURE: Build completed with 2 failures.
+
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':app:lintVitalAnalyzeRelease' (registered by plugin 'com.android.internal.application').
+> A failure occurred while executing com.android.build.gradle.internal.lint.AndroidLintWorkAction
+   > 25.0.4
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Failed to stop service 'com.android.build.gradle.internal.services.LintClassLoaderBuildService_a32a9bc7-c464-4887-8d78-28c35c7ce58a'.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+BUILD FAILED in 2m 20s

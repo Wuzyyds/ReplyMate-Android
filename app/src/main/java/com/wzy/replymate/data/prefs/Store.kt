@@ -95,9 +95,17 @@ class SettingsStore(context: Context) {
         get() = sp.getBoolean(K_EVOLVE, true)
         set(v) = sp.edit().putBoolean(K_EVOLVE, v).apply()
 
-    /** 版本清单地址（静态 JSON）；默认指向公开仓库，留空 = 关闭更新检查 */
+    /** 版本清单地址（静态 JSON）；默认指向公开仓库，主动清空 = 关闭更新检查 */
     var updateUrl: String
-        get() = sp.getString(K_UPDATE, DEFAULT_UPDATE_URL) ?: DEFAULT_UPDATE_URL
+        get() {
+            val v = sp.getString(K_UPDATE, null)
+            return when {
+                v == null -> DEFAULT_UPDATE_URL              // 从未设置过：用官方清单
+                v.isBlank() -> ""                            // 用户主动清空：关闭检查
+                !v.startsWith("http") -> DEFAULT_UPDATE_URL  // 填了非法值：回落默认，别让更新静默失效
+                else -> v
+            }
+        }
         set(v) = sp.edit().putString(K_UPDATE, v.trim()).apply()
 
     private inline fun <reified T : Enum<T>> enumOf(name: String?, fallback: T): T =

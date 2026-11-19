@@ -18,8 +18,8 @@ android {
         //   versionName 1.0.11 → 1.0.12 → 1.0.13
         //   versionCode 11     → 12     → 13
         // 更新提示靠 versionCode 比较，忘了加就会出现「装了新版还不提示」。
-        versionCode = 52
-        versionName = "1.0.52"
+        versionCode = 54
+        versionName = "1.0.54"
     }
 
     buildTypes {

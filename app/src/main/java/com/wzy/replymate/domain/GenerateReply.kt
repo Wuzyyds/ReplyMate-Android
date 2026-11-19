@@ -82,7 +82,8 @@ class GenerateReply(
             val raw = llm.stream(cfg, messages, 0.8f, maxTokens, onProgress)
             parsed = Parser.parse(raw, want)
             if (parsed == null) {
-                val raw2 = llm.stream(cfg, messages, 0.5f, maxTokens)
+                // 重试只要 3 条短句，token 减半能让第二次快 30% 左右
+                val raw2 = llm.stream(cfg, messages, 0.5f, 500)
                 parsed = Parser.parse(raw2, want)
             }
         } catch (e: LlmException) {

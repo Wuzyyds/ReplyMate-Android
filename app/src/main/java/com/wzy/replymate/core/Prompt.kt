@@ -68,13 +68,21 @@ object PromptBuilder {
         EmojiPolicy.RICH -> "6. 可以用 1-3 个 emoji，但不要放在句首。"
     }
 
+    /**
+     * 长对话只保留结尾部分：模型真正需要的是「最后一句说了什么」，
+     * 前面几百字只会拖慢首字时间（prefill 越长越慢），对质量几乎没帮助。
+     */
+    private fun String.tailForPrompt(max: Int): String =
+        if (length <= max) this
+        else "…（前面 ${length - max} 字已省略）\n" + takeLast(max)
+
     private fun user(req: GenRequest): String = buildString {
         when (req.taskType) {
             TaskType.REPLY -> {
                 append("关系：").append(req.relation.label).append('\n')
                 append("我想达到：").append(req.goal.label).append('\n')
                 append("风格：").append(req.style.label).append("\n\n")
-                append("对话原文（最后一句是对方说的）：\n").append(req.input.trim())
+                append("对话原文（最后一句是对方说的）：\n").append(req.input.trim().tailForPrompt(1200))
             }
             TaskType.POST -> {
                 append("场景：").append(req.scene.label).append('\n')
@@ -89,10 +97,11 @@ object PromptBuilder {
             TaskType.POLISH -> {
                 append("目标语气：").append(req.tone.label).append('\n')
                 append("风格：").append(req.style.label).append("\n\n")
+                val body = req.input.trim().tailForPrompt(800)
                 if (req.polishInput == PolishInput.INTENT) {
-                    append("我想达到的效果：\n").append(req.input.trim())
+                    append("我想达到的效果：\n").append(body)
                 } else {
-                    append("我原本想说的：\n").append(req.input.trim())
+                    append("我原本想说的：\n").append(body)
                 }
             }
         }

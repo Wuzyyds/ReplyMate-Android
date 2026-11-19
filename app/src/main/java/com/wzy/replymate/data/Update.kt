@@ -70,10 +70,13 @@ object UpdateChecker {
             android.util.Log.d("RM", "update: 地址为空，跳过检查")
             return@withContext null
         }
-        android.util.Log.d("RM", "update: 请求 $url")
+        // raw.githubusercontent.com 这类静态托管有约 5 分钟 CDN 缓存，
+        // 不加时间戳会出现「发了新版用户却查不到」；加一个查询参数让 CDN 视为新资源
+        val busted = url + (if (url.contains("?")) "&" else "?") + "t=" + System.currentTimeMillis()
+        android.util.Log.d("RM", "update: 请求 $busted")
         val body = runCatching {
             val req = Request.Builder()
-                .url(url)
+                .url(busted)
                 .header("Cache-Control", "no-cache")
                 .build()
             http.newCall(req).execute().use { r -> if (r.isSuccessful) r.body?.string() else null }

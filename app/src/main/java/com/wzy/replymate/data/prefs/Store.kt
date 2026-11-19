@@ -112,9 +112,14 @@ class SettingsStore(context: Context) {
         name?.let { runCatching { enumValueOf<T>(it) }.getOrNull() } ?: fallback
 
     private companion object {
-        /** 默认更新清单：公开仓库根目录的 update.json，用户可在设置里改成别的地址 */
+        /**
+         * 默认更新清单。用 GitHub Pages 而不是 raw.githubusercontent.com：
+         * raw 在国内经常被直接阻断（实测模拟器请求超时无响应）；
+         * jsDelivr 可访问但 @main 缓存长达 12 小时，发了新版要等半天；
+         * Pages 部署后约 40 秒可用，缓存 10 分钟，是三者里最均衡的。
+         */
         const val DEFAULT_UPDATE_URL =
-            "https://raw.githubusercontent.com/Wuzyyds/ReplyMate-Android/main/update.json"
+            "https://wuzyyds.github.io/ReplyMate-Android/update.json"
 
         const val K_BASE = "base_url"
         const val K_KEY = "api_key"

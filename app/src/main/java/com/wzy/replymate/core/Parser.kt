@@ -42,6 +42,27 @@ object Parser {
         return picked
     }
 
+    private val TEXT_RE = Regex("\"text\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"")
+    private val WHY_RE = Regex("\"why\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"")
+
+    /**
+     * 边生成边解析：只要某一项的 text 和 why 都收全了就立刻返回它。
+     * 用于「首字先显示」——不必等 3 条全齐才上屏。
+     * 只匹配已经闭合的引号，所以不会把半截字符串当成结果。
+     */
+    fun parsePartial(raw: String, max: Int = 3): List<Candidate> {
+        if (raw.isBlank()) return emptyList()
+        val texts = TEXT_RE.findAll(raw).map { unescape(it.groupValues[1]).trim() }.toList()
+        val whys = WHY_RE.findAll(raw).map { unescape(it.groupValues[1]).trim() }.toList()
+        val n = minOf(texts.size, whys.size, max)
+        return (0 until n).mapNotNull { i ->
+            if (texts[i].isEmpty() || whys[i].isEmpty()) null else Candidate(texts[i], whys[i])
+        }
+    }
+
+    private fun unescape(s: String): String =
+        s.replace("\\n", "\n").replace("\\\"", "\"").replace("\\/", "/")
+
     fun extractJson(raw: String): String {
         val s = raw.indexOf('{')
         val e = raw.lastIndexOf('}')

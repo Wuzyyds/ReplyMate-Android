@@ -38,7 +38,9 @@ class GenerateReply(
     suspend fun generate(
         req: GenRequest,
         forceRefresh: Boolean = false,
-        onProgress: (String) -> Unit = {}
+        onProgress: (String) -> Unit = {},
+        /** 边生成边上屏：每收全一条候选就回调一次，UI 不用等 3 条齐 */
+        onPartial: (List<Candidate>) -> Unit = {}
     ): GenResult = withContext(Dispatchers.IO) {
         val key = cacheKey(req)
 
@@ -79,7 +81,12 @@ class GenerateReply(
         val want = 3
         val maxTokens = 800
         try {
-            val raw = llm.stream(cfg, messages, 0.8f, maxTokens, onProgress)
+            val raw = llm.stream(cfg, messages, 0.8f, maxTokens) { partial ->
+                onProgress(partial)
+                // 收全一条就先送上去，用户不用盯着「正在想」
+                val live = Parser.parsePartial(partial, want)
+                if (live.isNotEmpty()) onPartial(live)
+            }
             parsed = Parser.parse(raw, want)
             if (parsed == null) {
                 // 重试只要 3 条短句，token 减半能让第二次快 30% 左右

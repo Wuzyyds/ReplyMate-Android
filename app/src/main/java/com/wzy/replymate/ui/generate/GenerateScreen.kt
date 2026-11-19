@@ -189,9 +189,19 @@ class GenerateViewModel(app: Application) : AndroidViewModel(app) {
                 it.copy(loading = true, streamed = "", candidates = emptyList(), notice = null, error = null, source = null)
             }
             try {
-                val res = core.generate.generate(req, forceRefresh) { partial ->
-                    _state.update { s -> s.copy(streamed = partial) }
-                }
+                val res = core.generate.generate(
+                    req,
+                    forceRefresh,
+                    onProgress = { partial ->
+                        _state.update { s -> s.copy(streamed = partial) }
+                    },
+                    onPartial = { live ->
+                        // 收到一条就先上屏，剩下两条继续流
+                        _state.update { s ->
+                            s.copy(candidates = live, source = Source.MODEL, error = null)
+                        }
+                    }
+                )
                 _state.update {
                     it.copy(
                         loading = false,
@@ -501,8 +511,8 @@ fun GenerateScreen(mode: String, onBack: () -> Unit, onOpenSettings: () -> Unit)
                 Box(Modifier.padding(top = 12.dp)) { NoticeBar(notice) }
             }
 
-            // ---- 生成中 ----
-            if (s.loading) {
+            // ---- 生成中（已有候选上屏就不再占位，避免把刚出来的结果挤下去）----
+            if (s.loading && s.candidates.isEmpty()) {
                 Column(
                     Modifier
                         .padding(top = 12.dp)
@@ -525,7 +535,7 @@ fun GenerateScreen(mode: String, onBack: () -> Unit, onOpenSettings: () -> Unit)
             // ---- 结果 ----
             if (s.candidates.isNotEmpty()) {
                 SectionLabel(
-                    "3 条候选",
+                    if (s.loading) "已出 ${s.candidates.size} 条 · 还在写" else "3 条候选",
                     if (s.source == Source.TEMPLATE) "离线模板" else "模型"
                 )
                 s.candidates.forEachIndexed { i, c ->

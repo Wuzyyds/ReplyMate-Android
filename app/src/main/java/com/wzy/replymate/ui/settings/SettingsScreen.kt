@@ -180,14 +180,25 @@ fun SettingsScreen(onOpenTemplates: () -> Unit = {}, onOpenContacts: () -> Unit 
     ) {
         Text("设置", fontSize = 22.sp, fontWeight = FontWeight.SemiBold, color = Ink, modifier = Modifier.padding(top = 14.dp, bottom = 6.dp))
 
-        // ---- API KEY：只让用户填这一项，厂家和地址全自动 ----
-        SectionLabel("API Key", "粘贴即可，其余自动配好")
+        // ---- API KEY：默认用内置额度，普通用户不用管这一项 ----
+        SectionLabel(
+            if (store.usingBuiltinKey) "开箱即用" else "API Key",
+            if (store.usingBuiltinKey) "已内置体验额度，不用填；想用自己的 Key 再粘下面"
+            else "粘贴即可，其余自动配好"
+        )
 
         OutlinedTextField(
             value = key,
             onValueChange = { key = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("粘贴 API Key（sk-… 或 xxx.yyy）", fontSize = 11.sp, color = Faint) },
+            placeholder = {
+                Text(
+                    if (store.usingBuiltinKey) "可选：填自己的 Key（留空就用内置额度）"
+                    else "粘贴 API Key（sk-… 或 xxx.yyy）",
+                    fontSize = 11.sp,
+                    color = Faint
+                )
+            },
             singleLine = true,
             // 脱敏：永远只显示密码点，不提供“显示明文”开关
             visualTransformation = PasswordVisualTransformation(),

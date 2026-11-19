@@ -2404,6 +2404,52 @@ class OverlayService : Service() {
         }
     }
 
+    /**
+     * 让面板可以按住标题拖动。只绑标题，内容区（滚动、按钮）不受影响。
+     * 位置直接改 panelParams 并 updateViewLayout，松手不吸附——用户放哪就是哪。
+     */
+    private fun makeDraggable(handle: View) {
+        var startRawX = 0f
+        var startRawY = 0f
+        var origX = 0
+        var origY = 0
+        var moving = false
+        handle.setOnTouchListener { _, e ->
+            val p = panelParams ?: return@setOnTouchListener false
+            when (e.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    startRawX = e.rawX
+                    startRawY = e.rawY
+                    origX = p.x
+                    origY = p.y
+                    moving = false
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val dx = e.rawX - startRawX
+                    val dy = e.rawY - startRawY
+                    if (!moving && (abs(dx) > dp(5f) || abs(dy) > dp(5f))) moving = true
+                    if (moving) {
+                        val dm = resources.displayMetrics
+                        val maxX = (dm.widthPixels - p.width).coerceAtLeast(0)
+                        // 底部留一点余量，别整块拖出屏幕外找不回来
+                        val maxY = (dm.heightPixels - dp(96f)).coerceAtLeast(0)
+                        p.x = (origX + dx.toInt()).coerceIn(0, maxX)
+                        p.y = (origY + dy.toInt()).coerceIn(0, maxY)
+                        panel?.let { runCatching { wm.updateViewLayout(it, p) } }
+                    }
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    if (moving) {
+                        moving = false
+                        return@setOnTouchListener true   // 拖动后不要触发标题的点击
+                    }
+                }
+            }
+            // 未开始拖动时放行，交给子控件（其实是标题自己，没有子控件）
+            moving
+        }
+    }
+
     private fun buildPanel(statusText: String): View {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -2416,12 +2462,16 @@ class OverlayService : Service() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
         }
-        titleRow.addView(TextView(this).apply {
+        val titleView = TextView(this).apply {
             text = "回复建议"
             textSize = 14.5f
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(0xFF14161C.toInt())
-        }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            // 整条标题可拖：按住标题移动面板；右侧「聊天」「×」仍是普通按钮
+            isClickable = true
+        }
+        makeDraggable(titleView)
+        titleRow.addView(titleView, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         titleRow.addView(TextView(this).apply {
             text = "聊天"
             textSize = 11f

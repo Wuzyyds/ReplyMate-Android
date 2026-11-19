@@ -79,7 +79,8 @@ class GenerateReply(
         var fallbackNotice: String? = null
         // 面板一屏放得下 3 条；条数太少不够挑，太多反而要滚动
         val want = 3
-        val maxTokens = 800
+        // 3 条 ×（80 字正文 + 22 字 why）约 400 token，700 留足余量且出字更快
+        val maxTokens = 700
         try {
             val raw = llm.stream(cfg, messages, 0.8f, maxTokens) { partial ->
                 onProgress(partial)

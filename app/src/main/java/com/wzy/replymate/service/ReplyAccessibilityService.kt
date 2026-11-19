@@ -352,10 +352,12 @@ class ReplyAccessibilityService : AccessibilityService() {
                             // 聊天页里不只有气泡：日期、已读、职位卡片、整块点击卡片都要过滤
                             val strictOk = inBand &&
                                 r.width() > 8 && r.width() <= w * 0.92f &&
-                                r.height() in 1..(h * 0.25f).toInt() &&
+                                r.height() in 1..(h * 0.30f).toInt() &&
                                 !(r.width() > w * 0.86f && r.height() < h * 0.05f) &&
                                 !(abs(r.centerX() - w / 2f) < w * 0.11f && txt.length <= 24) &&
-                                !(n.isClickable && r.height() > h * 0.10f && txt.length <= 80)
+                                // 微信的消息气泡自带 isClickable（长按菜单），阈值得给到 18%：
+                                // 用 10% 时稍长一点的消息会被当成「大块卡片」整条丢掉，QQ 不带这个属性所以没事
+                                !(n.isClickable && r.height() > h * 0.18f && txt.length <= 80)
                             if (strictOk || looseOk) {
                                 // 父子节点同文案时只收子节点；只对要收的候选查一次
                                 if (!hasSameTextChild(n, txt)) {

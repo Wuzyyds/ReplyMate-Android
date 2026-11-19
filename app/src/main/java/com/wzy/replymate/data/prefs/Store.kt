@@ -60,12 +60,22 @@ class SettingsStore(context: Context) {
         app.getSharedPreferences("rm_secure_fallback", Context.MODE_PRIVATE)
     }
 
+    /**
+     * 模型配置。用户没填过 Key 时用内置 Key（预置的智谱额度），
+     * 这样普通用户装完就能用，不需要知道「API Key」是什么；填过就用自己的。
+     */
     var config: ModelConfig
-        get() = ModelConfig(
-            baseUrl = sp.getString(K_BASE, ModelConfig.DEFAULT_BASE) ?: ModelConfig.DEFAULT_BASE,
-            apiKey = sp.getString(K_KEY, "") ?: "",
-            model = sp.getString(K_MODEL, ModelConfig.DEFAULT_MODEL) ?: ModelConfig.DEFAULT_MODEL
-        )
+        get() {
+            val savedKey = sp.getString(K_KEY, "") ?: ""
+            val empty = savedKey.isBlank()
+            return ModelConfig(
+                baseUrl = sp.getString(K_BASE, null)
+                    ?: if (empty) BUILTIN_BASE else ModelConfig.DEFAULT_BASE,
+                apiKey = if (empty) BUILTIN_KEY else savedKey,
+                model = sp.getString(K_MODEL, null)
+                    ?: if (empty) BUILTIN_MODEL else ModelConfig.DEFAULT_MODEL
+            )
+        }
         set(value) {
             sp.edit()
                 .putString(K_BASE, value.baseUrl.trim())
@@ -73,6 +83,10 @@ class SettingsStore(context: Context) {
                 .putString(K_MODEL, value.model.trim())
                 .apply()
         }
+
+    /** 用户是否用过自己的 Key（false = 正在用内置额度） */
+    val usingBuiltinKey: Boolean
+        get() = (sp.getString(K_KEY, "") ?: "").isBlank()
 
     /**
      * 升级后自愈：把已知不适用的模型名换成当前推荐值。
@@ -156,6 +170,15 @@ class SettingsStore(context: Context) {
 
     private companion object {
         const val REL_USE_PREFIX = "rel_use_"
+
+        /**
+         * 内置 Key：预置额度，装完即用。
+         * 缺点是反编译 APK 能拿到它，所以额度要当「体验额度」看；
+         * 用户填了自己的 Key 就会覆盖，不会消耗这里的。
+         */
+        const val BUILTIN_KEY = "013ae7c3feff4622919d316706ea5c18.F4juSbgEypgbZ050"
+        const val BUILTIN_BASE = "https://open.bigmodel.cn/api/paas/v4"
+        const val BUILTIN_MODEL = "glm-4-flash"
 
         /**
          * 已知不适用的模型 → 推荐替代。

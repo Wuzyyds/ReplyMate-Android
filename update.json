@@ -1,7 +1,7 @@
 {
-  "versionCode": 57,
-  "versionName": "1.0.57",
-  "notes": "设置页支持一键更新；下载显示百分比",
-  "apkUrl": "https://github.com/Wuzyyds/ReplyMate-Android/releases/download/v1.0.57/replymate-1.0.57.apk",
+  "versionCode": 58,
+  "versionName": "1.0.58",
+  "notes": "首页文案轮播；修复智谱模型导致生成失败；移除隐私说明行",
+  "apkUrl": "https://github.com/Wuzyyds/ReplyMate-Android/releases/download/v1.0.58/replymate-1.0.58.apk",
   "minSupported": 1
 }

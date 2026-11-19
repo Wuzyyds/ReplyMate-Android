@@ -335,33 +335,53 @@ fun HomeScreen(onOpenGenerate: (TaskType) -> Unit, onOpenOcr: () -> Unit = {}) {
 
             Spacer(Modifier.height(11.dp))
 
-            Text(
-                "粘贴一段对话",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.White,
-                lineHeight = 32.sp,
-                letterSpacing = 0.25.sp
-            )
-            Text(
-                "回得体面",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Medium,
-                lineHeight = 32.sp,
-                letterSpacing = 0.25.sp,
-                style = TextStyle(
-                    brush = Brush.linearGradient(
-                        listOf(Color(0xFFC77DFF), Color(0xFFFF8FA3), Color(0xFFFFC078))
-                    )
-                )
-            )
-            Text(
-                "提取对话 → 生成 3 条建议 → 一键填入输入框",
-                fontSize = 12.sp,
-                color = Color(0xFFF2EEF7).copy(alpha = 0.52f),
-                lineHeight = 19.sp,
-                modifier = Modifier.padding(top = 10.dp)
-            )
+            // 主卡文案轮播：同一张卡里换痛点场景，风格不变，每 4.5 秒一句
+            var heroIndex by remember { mutableStateOf(0) }
+            LaunchedEffect(Unit) {
+                while (true) {
+                    kotlinx.coroutines.delay(4500)
+                    heroIndex = (heroIndex + 1) % HERO_COPIES.size
+                }
+            }
+            val copy = HERO_COPIES[heroIndex]
+            // 固定高度：文案长短不一，不固定会让主卡高度跳动
+            Box(Modifier.fillMaxWidth().height(104.dp)) {
+                androidx.compose.animation.Crossfade(
+                    targetState = copy,
+                    animationSpec = androidx.compose.animation.core.tween(520),
+                    label = "hero"
+                ) { c ->
+                    Column {
+                        Text(
+                            c.line1,
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White,
+                            lineHeight = 32.sp,
+                            letterSpacing = 0.25.sp
+                        )
+                        Text(
+                            c.line2,
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.Medium,
+                            lineHeight = 32.sp,
+                            letterSpacing = 0.25.sp,
+                            style = TextStyle(
+                                brush = Brush.linearGradient(
+                                    listOf(Color(0xFFC77DFF), Color(0xFFFF8FA3), Color(0xFFFFC078))
+                                )
+                            )
+                        )
+                        Text(
+                            c.desc,
+                            fontSize = 12.sp,
+                            color = Color(0xFFF2EEF7).copy(alpha = 0.52f),
+                            lineHeight = 19.sp,
+                            modifier = Modifier.padding(top = 10.dp)
+                        )
+                    }
+                }
+            }
 
             Box(
                 Modifier
@@ -569,26 +589,7 @@ fun HomeScreen(onOpenGenerate: (TaskType) -> Unit, onOpenOcr: () -> Unit = {}) {
             }
         }
 
-        // 隐私：不占卡片，一行带过，减少视觉噪音
-        Row(
-            Modifier
-                .padding(top = 14.dp, bottom = 18.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Lock,
-                contentDescription = null,
-                tint = Faint,
-                modifier = Modifier.size(13.dp)
-            )
-            Spacer(Modifier.width(6.dp))
-            Text(
-                "读屏只在本机解析 · 生成时才把内容发给模型 · 零第三方 SDK",
-                fontSize = 10.sp,
-                color = Faint
-            )
-        }
+        Spacer(Modifier.height(18.dp))
     }
     }
 }
@@ -668,6 +669,21 @@ private fun Stat(value: String, label: String, modifier: Modifier = Modifier) {
         Text(label, fontSize = 10.sp, color = Muted, modifier = Modifier.padding(top = 2.dp))
     }
 }
+
+/** 主卡轮播的一句文案：两行标题 + 一行说明 */
+private data class HeroCopy(val line1: String, val line2: String, val desc: String)
+
+/**
+ * 首页主卡的轮播文案。都是同一类痛点——「想表达但怕说错」，
+ * 轮换只是换场景，不换语气，避免像广告条。
+ */
+private val HERO_COPIES = listOf(
+    HeroCopy("粘贴一段对话", "回得体面", "提取对话 → 生成 3 条建议 → 一键填入输入框"),
+    HeroCopy("不想答应", "又怕撕破脸", "把拒绝说得体面，不伤关系也不委屈自己"),
+    HeroCopy("想安慰他", "又怕说错话", "共情但不越界，暖到点上不尴尬"),
+    HeroCopy("被追问", "不知道怎么接", "三句话把场面圆回来，不冷场也不失礼"),
+    HeroCopy("想催进度", "又怕显得急", "催得客气又不含糊，事办成关系还在")
+)
 
 private fun readClipboard(ctx: Context): String {
     val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

@@ -133,14 +133,21 @@ class GenerateViewModel(app: Application) : AndroidViewModel(app) {
     private var seeded = false
 
     fun seed(task: TaskType) {
-        if (seeded) return
+        // 种子数据（剪贴板原文 / 场景预设）只在首次进入时消费；
+        // 但 task 必须每次跟随路由，否则从首页点「朋友圈」进来会停在「回复」模式
+        val first = !seeded
         seeded = true
-        _state.update {
-            it.copy(
+        _state.update { s ->
+            s.copy(
                 task = task,
-                input = if (GenSeed.text.isNotBlank()) GenSeed.text else it.input,
-                relation = GenSeed.relation ?: it.relation,
-                goal = GenSeed.goal ?: it.goal
+                input = if (first && GenSeed.text.isNotBlank()) GenSeed.text else s.input,
+                relation = if (first) (GenSeed.relation ?: s.relation) else s.relation,
+                goal = if (first) (GenSeed.goal ?: s.goal) else s.goal,
+                // 换模式就清掉上一批结果，避免「发圈」页上挂着「回复」的候选
+                candidates = if (s.task == task) s.candidates else emptyList(),
+                notice = null,
+                error = null,
+                source = null
             )
         }
         GenSeed.clear()

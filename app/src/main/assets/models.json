@@ -14,7 +14,7 @@
   {
     "name": "智谱 GLM",
     "baseUrl": "https://open.bigmodel.cn/api/paas/v4",
-    "model": "glm-5.3-flash",
-    "note": "快速兜底；是否仍有免费档请在控制台确认"
+    "model": "glm-4-flash",
+    "note": "实测 0.9s 出字；glm-5.3-* 是推理模型，36s 才出结果，不适合即时回复"
   }
 ]

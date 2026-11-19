@@ -74,6 +74,19 @@ class SettingsStore(context: Context) {
                 .apply()
         }
 
+    /**
+     * 升级后自愈：把已知不适用的模型名换成当前推荐值。
+     * 只改 model 字段，Key 和地址原样保留，用户不需要重新粘贴。
+     * 例如 glm-5.3-flash 是推理模型，出字要 30 秒以上且经常失败。
+     */
+    fun migrateModelIfNeeded() {
+        val cfg = config
+        val fixed = BAD_MODELS[cfg.model] ?: return
+        // 没配 Key 的用户不必处理，等他配置时自然会用新默认值
+        if (cfg.apiKey.isBlank()) return
+        config = cfg.copy(model = fixed)
+    }
+
     var defaultRelation: Relation
         get() = enumOf(sp.getString(K_REL, null), Relation.FRIEND)
         set(v) = sp.edit().putString(K_REL, v.name).apply()
@@ -112,6 +125,14 @@ class SettingsStore(context: Context) {
         name?.let { runCatching { enumValueOf<T>(it) }.getOrNull() } ?: fallback
 
     private companion object {
+        /**
+         * 已知不适用的模型 → 推荐替代。
+         * 加新条目只需在这里加一行，老用户升级后自动纠正，不用重新粘贴 Key。
+         */
+        val BAD_MODELS = mapOf(
+            "glm-5.3-flash" to "glm-4-flash"   // 推理模型，30s+ 才出结果，经常超时
+        )
+
         /**
          * 默认更新清单。用 GitHub Pages 而不是 raw.githubusercontent.com：
          * raw 在国内经常被直接阻断（实测模拟器请求超时无响应）；

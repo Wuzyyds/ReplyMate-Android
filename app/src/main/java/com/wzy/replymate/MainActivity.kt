@@ -127,6 +127,8 @@ fun AppRoot() {
     // 冷启动静默查一次版本（一天最多一次；地址没配就什么都不做）
     androidx.compose.runtime.LaunchedEffect(Unit) {
         val app = ctx.applicationContext as ReplyMateApp
+        // 先把已作废的模型名纠正掉（保留 Key），再查版本
+        runCatching { app.settings.migrateModelIfNeeded() }
         runCatching { com.wzy.replymate.data.UpdateChecker.checkIfDue(ctx, app.settings.updateUrl) }
     }
     val nav = rememberNavController()

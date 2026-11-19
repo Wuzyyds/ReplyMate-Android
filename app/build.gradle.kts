@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -6,9 +8,30 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+// 正式签名信息放 local.properties（已在 .gitignore 里，不会进仓库）。
+// 拿不到配置时回落到 debug 签名，保证换台机器也能构建出来跑通。
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+val hasReleaseSigning = localProps.getProperty("RELEASE_STORE_PASSWORD") != null
+
 android {
     namespace = "com.wzy.replymate"
     compileSdk = 35
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = rootProject.file(
+                    localProps.getProperty("RELEASE_STORE_FILE") ?: "replymate-release.jks"
+                )
+                storePassword = localProps.getProperty("RELEASE_STORE_PASSWORD")
+                keyAlias = localProps.getProperty("RELEASE_KEY_ALIAS")
+                keyPassword = localProps.getProperty("RELEASE_KEY_PASSWORD")
+            }
+        }
+    }
 
     defaultConfig {
         applicationId = "com.wzy.replymate"
@@ -24,8 +47,12 @@ android {
 
     buildTypes {
         release {
-            // 测试用：release 沿用 debug 签名，才能直接覆盖装到模拟器上量启动耗时
-            signingConfig = signingConfigs.getByName("debug")
+            // 有正式签名就用正式的；没配（比如别人 clone 后本地没 key）就回落 debug，保证能装
+            signingConfig = if (hasReleaseSigning) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

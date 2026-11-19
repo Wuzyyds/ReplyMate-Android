@@ -4,6 +4,15 @@
 -keepattributes *Annotation*, InnerClasses
 -keepclassmembers class kotlinx.serialization.json.** { *; }
 
+# ---- release 包剥离调试日志 ----
+# Log.d / Log.v 连同字符串一起被删掉，包体更小，也不会把内部状态打到 logcat。
+# Log.e / Log.w 保留：线上出问题时还能靠它排查。
+-assumenosideeffects class android.util.Log {
+    public static int d(...);
+    public static int v(...);
+    public static boolean isLoggable(java.lang.String, int);
+}
+
 # ---- R8 开启后必需的保留规则 ----
 
 # kotlinx.serialization：反序列化依赖伴生对象与序列化器，混淆后会解析失败

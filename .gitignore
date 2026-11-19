@@ -21,5 +21,9 @@ Thumbs.db
 *.aab
 *.log
 
+# 签名文件：绝对不能提交，泄露等于任何人都能冒充你发版
+*.jks
+*.keystore
+
 # 工作区私有记录（开发过程日志，不公开）
 .workbuddy/

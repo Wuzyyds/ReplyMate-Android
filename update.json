@@ -1,7 +1,7 @@
 {
-  "versionCode": 55,
-  "versionName": "1.0.55",
-  "notes": "临时测试版本",
+  "versionCode": 57,
+  "versionName": "1.0.57",
+  "notes": "验证更新提示链路",
   "apkUrl": "https://github.com/Wuzyyds/ReplyMate-Android/releases/download/v1.0.54/replymate-1.0.54.apk",
   "minSupported": 1
 }

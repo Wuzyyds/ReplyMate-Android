@@ -6,7 +6,7 @@ enum class TaskType(val label: String) {
 }
 
 enum class Relation(val label: String) {
-    FRIEND("朋友"), FLIRT("暧昧"), FAMILY("家人"),
+    FRIEND("朋友"), FLIRT("暧昧"), COUPLE("情侣"), FAMILY("家人"),
     HR("HR"), BOSS("领导"), COLLEAGUE("同事"), CLIENT("客户")
 }
 

@@ -2286,6 +2286,12 @@ class OverlayService : Service() {
         box.removeAllViews()
 
         relationExpanded = true
+        // 读不到内容时无法推断，默认选中这个人最常聊的关系（用户手改过就尊重他的选择）
+        if (!relationManual) {
+            runCatching {
+                currentRelation = (applicationContext as ReplyMateApp).settings.mostUsedRelation()
+            }
+        }
         renderRelationChips()
 
         box.addView(TextView(this).apply {
@@ -2295,24 +2301,20 @@ class OverlayService : Service() {
             setLineSpacing(dp(2f).toFloat(), 1f)
             setPadding(0, dp(10f), 0, dp(8f))
         })
-        val row = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-        }
-        row.addView(pillButton("粘贴剪贴板", primary = true) { pasteAndGenerate(openPanelIfClosed = false) })
-        row.addView(pillButton("再读一次") { readAndShow() })
-        box.addView(row)
 
-        val row2 = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            setPadding(0, dp(8f), 0, 0)
-        }
-        row2.addView(pillButton("截图取词") { screenshotAndGenerate() })
+        // 2×2 等宽网格：主操作和辅助操作各占半行，比长短不齐的胶囊整齐
+        gridRow(
+            listOf(
+                Triple("粘贴剪贴板", true) { pasteAndGenerate(openPanelIfClosed = false) },
+                Triple("再读一次", false) { readAndShow() }
+            ),
+            10f
+        )
+        val secondary = mutableListOf(Triple("截图取词", false) { screenshotAndGenerate() })
         if (showSettings) {
-            row2.addView(pillButton("去开启读屏") { openAccessibilitySettings() })
+            secondary.add(Triple("去开启读屏", false) { openAccessibilitySettings() })
         }
-        box.addView(row2)
+        gridRow(secondary)
 
         box.addView(TextView(this).apply {
             text = "打开 App 可截图识别 / 手动输入 ›"
@@ -2598,7 +2600,11 @@ class OverlayService : Service() {
             return
         }
 
-        listOf(Relation.BOSS, Relation.COLLEAGUE, Relation.FRIEND, Relation.FLIRT).forEach { r ->
+        // 按使用频率排：经常跟领导聊的用户，「领导」自然排第一；
+        // 降级态不再给「收起」——用户进到这里就是要选一个关系
+        val byUsage = (applicationContext as ReplyMateApp).settings.relationsByUsage()
+        val visible = (byUsage.take(5) + currentRelation).distinct()
+        visible.forEach { r ->
             val on = r == currentRelation
             row.addView(TextView(this).apply {
                 text = r.label
@@ -2623,16 +2629,6 @@ class OverlayService : Service() {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply { rightMargin = dp(6f) })
         }
-        row.addView(TextView(this).apply {
-            text = "收起"
-            textSize = 11f
-            setTextColor(0xFF8A8FA3.toInt())
-            setPadding(dp(8f), dp(5f), dp(4f), dp(5f))
-            setOnClickListener {
-                relationExpanded = false
-                renderRelationChips()
-            }
-        })
     }
 
     /**
@@ -2649,10 +2645,13 @@ class OverlayService : Service() {
             hit("甲方", "尾款", "合同", "报价单", "乙方") -> Relation.CLIENT
             hit("方案", "报告", "进度", "交付", "排期", "需求文档", "复盘", "评审") -> Relation.COLLEAGUE
             hit("亲爱的", "宝宝", "想你", "么么", "抱抱", "晚安呀") -> Relation.FLIRT
+            hit("老公", "老婆", "宝", "生气", "哄", "分手", "你都不理我", "吃醋", "安全感") -> Relation.COUPLE
             hit("妈", "爸", "奶奶", "外婆", "舅舅", "姑姑", "家里") -> Relation.FAMILY
             snap.pkg.contains("dingtalk") || snap.pkg.contains("rimet") ||
                 snap.pkg.contains("lark") || snap.pkg.contains("wework") -> Relation.COLLEAGUE
-            else -> Relation.FRIEND
+            // 看不出具体关系时，用这个人最常聊的关系，而不是一律当「朋友」
+            else -> (applicationContext as? ReplyMateApp)?.settings?.mostUsedRelation()
+                ?: Relation.FRIEND
         }
     }
 
@@ -2698,6 +2697,10 @@ class OverlayService : Service() {
         scope.launch {
             try {
                 val res = app.generate.generate(req, forceRefresh)
+                // 记一笔使用次数：下次打开面板时，这个关系会排到选择器前面
+                if (res.source == Source.MODEL) {
+                    runCatching { app.settings.bumpRelation(currentRelation) }
+                }
                 renderResult(res)
             } catch (e: LlmException) {
                 if (e.code == 0) {
@@ -2893,6 +2896,43 @@ class OverlayService : Service() {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply { leftMargin = dp(5f) }
+    }
+
+    /**
+     * 等宽网格按钮行。原来用长短不一的胶囊按钮左对齐，一行两个但宽度各不相同，
+     * 视觉上很散；改成等分 + 统一高度后整齐很多。
+     */
+    private fun gridRow(items: List<Triple<String, Boolean, () -> Unit>>, topMarginDp: Float = 8f) {
+        if (items.isEmpty()) return
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = dp(topMarginDp) }
+        }
+        items.forEachIndexed { i, item ->
+            val label = item.first
+            val primary = item.second
+            val action = item.third
+            val btn = TextView(this).apply {
+                text = label
+                textSize = 11.5f
+                gravity = Gravity.CENTER
+                setTextColor(if (primary) 0xFFFFFFFF.toInt() else 0xFF3B4154.toInt())
+                background = roundedBg(
+                    if (primary) 0xFFB03A72.toInt() else 0xFFFFFFFF.toInt(),
+                    10f,
+                    if (primary) null else 0xFFDCE0EA.toInt()
+                )
+                setOnClickListener { action() }
+            }
+            pressFx(btn)
+            row.addView(btn, LinearLayout.LayoutParams(0, dp(38f), 1f).apply {
+                if (i > 0) marginStart = dp(8f)
+            })
+        }
+        listBox?.addView(row)
     }
 
     private fun pillButton(label: String, primary: Boolean = false, onClick: () -> Unit): TextView =

@@ -91,6 +91,36 @@ class SettingsStore(context: Context) {
         get() = enumOf(sp.getString(K_REL, null), Relation.FRIEND)
         set(v) = sp.edit().putString(K_REL, v.name).apply()
 
+    /** 每次生成记一笔，用来把「常聊的人」排到关系选择器前面 */
+    fun bumpRelation(r: Relation) {
+        val k = REL_USE_PREFIX + r.name
+        sp.edit().putInt(k, sp.getInt(k, 0) + 1).apply()
+    }
+
+    fun usageOf(r: Relation): Int = sp.getInt(REL_USE_PREFIX + r.name, 0)
+
+    /** 用得最多的关系；一次都没用过则回落到设置里的默认值 */
+    fun mostUsedRelation(): Relation {
+        val top = Relation.entries.maxByOrNull { usageOf(it) }
+        return if (top != null && usageOf(top) > 0) top else defaultRelation
+    }
+
+    /** 按使用频率排序（同频保持枚举顺序），给关系选择器用 */
+    fun relationsByUsage(): List<Relation> {
+        // 还一次都没生成过：按常见程度给初始顺序，
+        // 否则按枚举顺序排会把「领导」挤出前五（枚举里它排第六）
+        if (Relation.entries.sumOf { usageOf(it) } == 0) {
+            return listOf(
+                Relation.BOSS, Relation.COLLEAGUE, Relation.COUPLE,
+                Relation.FLIRT, Relation.FRIEND, Relation.FAMILY,
+                Relation.HR, Relation.CLIENT
+            )
+        }
+        return Relation.entries.sortedWith(
+            compareByDescending<Relation> { usageOf(it) }.thenBy { it.ordinal }
+        )
+    }
+
     var defaultStyle: Style
         get() = enumOf(sp.getString(K_STYLE, null), Style.STEADY)
         set(v) = sp.edit().putString(K_STYLE, v.name).apply()
@@ -125,6 +155,8 @@ class SettingsStore(context: Context) {
         name?.let { runCatching { enumValueOf<T>(it) }.getOrNull() } ?: fallback
 
     private companion object {
+        const val REL_USE_PREFIX = "rel_use_"
+
         /**
          * 已知不适用的模型 → 推荐替代。
          * 加新条目只需在这里加一行，老用户升级后自动纠正，不用重新粘贴 Key。
